@@ -19,7 +19,7 @@ class Question {
             d = n % 10 ;
             if (d > c)
                 c = d;
-                n /= 10;
+            n /= 10;
         }
         return c;
    }
