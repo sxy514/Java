@@ -22,7 +22,7 @@ public class Dog {
     }
 
     public void setAge(int x){
-        this.age = age;
+        this.age = x;
     }
     public int add(){
         return this.age;
