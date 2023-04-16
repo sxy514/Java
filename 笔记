@@ -204,8 +204,102 @@
 第四节、处理异常
   Java语言把程序运行中可能遇到的错误分为两类，一类是非致命性的，通过某种修正后程序还能继续执行。这类错误称为异常(Exception)。如打开一个文件时，发现文件不存在。又比如说除0溢出、数组越界等。这一类错误可以借助程序员的处理来恢复。
   另一类是致命性的，即程序遇到了非常严重的不正常状态，不能简单地恢复执行，这就是错误。比如程序运行过程中内存耗尽。异常处理要考虑的问题包括：如何处理异常？把异常交给谁去处理？程序又该如何从异常中恢复？
+  
+  1. 异常及处理机制：
   为了解决异常问题，Java提供了异常处理机制，预定义了一个Exception类。当程序中发生异常时，通常不是简单地结束程序，而是转去执行某段特殊代码来处理这个异常，设法恢复程序继续执行。但是如果程序遇到错误时，往往不能从中恢复，因此最好的办法是让程序中断执行。
-  在一个方法的运行过程中，如果发生了异常，称程序产生了一个异常事件，相应地生成异常对象。该对象可能由正在运行的方法产生，也可能由JVM生成。
+  在一个方法的运行过程中，如果发生了异常，称程序产生了一个异常事件，相应地生成异常对象。该对象可能由正在运行的方法产生，也可能由JVM生成。这个对象中包含了该异常必要的详细信息,包括所发生的异常事件的类型及异常发生时程序的运行状态.
+  生成的异常对象传递给Java运行时系统,运行时系统寻找相应的代码来处理这个异常. 生成异常对象并把它提交给运行时系统的这一过程称为抛出(Throw)一个异常.
+  Java运行时系统从生成对象的代码块开始进行回溯,沿方法的调用栈逐层回溯,寻找相应的处理代码,直到找到包含相应异常处理的方法为止,并把异常对象交给该方法处理. 这一过程称为捕获(Catch). 当发现并相应异常时,就是处理(Handle)了异常。
+  简而言之，发现错误的代码可以“抛出”一个异常，程序员可以“捕获”该异常，如果可能则“处理”它，然后恢复程序的执行。
+
+  2. 异常分类：
+  Java语言在所有的预设包中都定义了异常类和错误类。Exception类是所有异常类的父类，Error类是所有错误类的父类，这两个类同时又是Throwable类的子类。虽然异常属于不同的类，但所有这些类都是标准类Throwable的后代。
+  Throwable在Java类库中，不需要import语句就可以使用。异常分为三种：{ 1.受检异常，必须被处理。 2.运行时异常，不需要处理。 3.错误，不需要处理。}
+    1.受检异常(Checked Exception)是程序执行期间发生的严重事件的后果。例如，如果程序从磁盘中读入数据，而系统找不到含有数据的文件，将会发生受检异常。这个异常所属类的类名是FileNotFoundException。发生错误的原因可能是文件丢失等等，写的好的程序通常都会预见这种问题并处理。
+    Java类库中的所有类都是使用名字来描述异常原因的。这些类表示受检异常: ClassNotFoundException / FileNotFoundException / IOException / NoSuchMethodException 及 WriteAbortedException.
+  
+    2.运行时异常(Runtime Exception)通常是程序逻辑错误的结果。例如，数组下标越界导致ArrayIndexOutOfBounds异常。被0除导致ArithmeticException异常。虽然可以添加代码来处理运行时异常，但一般只需要修改程序中的错误即可。
+    运行时异常的所有类都是类RuntimeException的子类，它是Exception的后代。
+    Java类库中的这些类表示运行时异常: ArithmeticException /  ArrayIndexOutOfBoundsException / ClassCastException / EmptyStackException / IllegalArgumentException / IllegalStateException / indexOutofBoundsException / NoSuchElementException / NullPointerException 和 UnsupportedOperationException
+
+    3.错误(Error)是标准类Error或其后代类的一个对象, Error是Throwable的后代。一般地，错误是指发生了不正确的情况，如内存溢出。这些情况都比较严重，一般程序很难处理。所以，即使处理错误是合法的，一般也不需要处理它们。
+    运行时异常和错误称为不检异常(Unchecked Exception)。
+  有些异常类在使用时必须要引入。例如，当在程序中使用IOException时，必须要使用import java.io.IOException;
+
+  3.处理异常：
+  当发生异常时，程序通常会中断执行，并输出一条信息。对所发生的异常进行处理的就是异常处理。异常处理的重要性在于程序不但能发现异常，还要能捕获异常。对于可能引发受检异常的方法，有两种选择：在方法内处理异常，或时告诉方法的调用者来处理。
+  比如，方法method1 调用 method2，method2又调用method3，进而method3又调用method4。在方法method4中如果出现异常，则在调用栈中的任何一个方法都可以捕获并处理这个异常。
+  要处理异常，必须先标出可能引起异常的Java语句，还必须决定要找哪个异常。处理异常的代码含有两段。第一段try块含有可能抛出异常的语句。第二段含有一个或多个catch块。每个catch块含有捕获及处理某中类型异常的代码。
+  catch(IOException e)标识符 e 称为catch块参数，它表示catch块将要处理IOException对象。参数e表示一个实际的异常。作为一个对象，每个异常都有存取方法getMessage()，它返回抛出异常时创建的描述字符串。通过显示这个字符串可知所发生异常的性质。
+  catch块执行完毕，执行它后面的语句。但是如果问题很严重，则catch块可以调用exit方法来中止程序，如 System.exit(0); 赋给函数System.exit的参数0，表示虽然遇到了一个严重问题，但程序是正常结束的。
+  单一一个try块中的语句，可能会抛出不同类型异常中的任意一个。在这样的try块后的catch块需要能捕获多个类的异常。为此，可以在try块后写多个catch块。当抛出一个异常时，为了能使所写的catch块真正捕获到相应的异常，catch块出现的次序很重要。程序的执行流程进入到其参数与异常类型相匹配的第一个catch块 ———— 按照出现的次序
+  例如，下列的catch块次序不好，因为用于FileNotFoundException的catch块永远不会被执行：
+  catch(IOException e) { .... } 
+  catch(FileNotFoundException e) { .... }
+  按照这个次序，任何I/O异常都被第一个catch块捕获。因为FileNotFoundException 派生于IOException，所以FileNotFoundException异常是IOException异常的一种，将与第一个catch块的参数相匹配。幸运的是，编译程序可能会对这样的次序给出警告信息。
+  正确的次序是：
+  catch(FileNotFoundException e) { .... } 
+  catch(IOException e) { .... }  //处理所有其他的IOException
+  因为受检异常和运行时异常的类都以Exception为祖先，故应避免在catch中使用Exception，而是尽可能地捕获具体的异常，且先捕获最具体的。
+  try-catch的语法格式如下：
+  try {
+    //可能抛出异常的代码
+  } catch (异常类型1 e) {
+    //抛出异常类型1时要执行的代码，可能包含：
+    System.out.println(e.getMessage());
+  } catch (异常类型2 e) {
+    //抛出异常类型2时要执行的代码，可能包含：
+    System.out.println(e.getMessage());
+  } finally {
+    // 必须执行的代码
+  }
+  其中，异常类型1、异常类型2是产生的异常类型。根据发生异常所属的类，找到相应的catch语句，然后执行其中的语句。尽量避免在try块或catch块中再嵌套try-catch块；
+  不论是否捕获异常，都要执行finally后的语句。一般地，为了统一处理程序出口，可将要处理的内容放到finally后的代码段中。
+  try后的大括号中的代码称为保护代码。如果在保护代码内执行了System.exit()方法，将不在执行finally后面的语句，这是不执行finally后面语句的唯一一种可能。
+
+  4.公共异常：
+  为了方便处理异常，Java预定义了一些常见的异常，下面列举几个常用到的异常。
+  1.ArithmeticException
+  整数除法中，如果除数为0，则发生异常，如这个表达式将引发ArithmeticException异常：int i = 12/0;
+  2.NullPointerException
+  如果一个对象还没有实例化，那么访问该对象或调用它的方法将导致NullPointerException异常。例如：
+  image im [] = new image[4];
+  System.out.println(im[0].toString());
+  第一行创建了有4个元素的数组im，每个元素是image类型，系统为其进行初始化，每个元素的值为null，表明它还没有指向任何实例。第二行要访问im[0]，由于访问的是还没有进行实例化的空引用，因此会导致NullPointerException。
+  3.NegativeArraySizeException
+  按常规，数组的元素个数应是一个大于等于0的整数。创建数组时，如果元素个数是负数，则会引发NegativeArraySizeException异常。
+  4.ArrayIndexOutOfBoundsException
+  Java把数组看作是对象，并用length变量记录数组的大小。访问数组元素时，运行时环境根据length值检查下标的大小。如果数组下标越界，则将导致ArrayIndexOutOfBoundsException异常。
+
+  5.抛出异常：
+  Java要求如果一个方法确实引发了一个异常(当然Error或RuntimeException两类错误除外)，那么在方法中必须写明相应的处理代码。
+  处理异常有两种方法。一种是try块和catch块，捕获到所发生的异常类，并进行相应的处理。当然，catch块可以为空，表示对发生的异常不进行处理。
+  另一种方法是，不在当前方法内处理异常，而是把异常抛出到调用方法中。当不能使用合理的方式来解决不正常或意外事件的情形下，才抛出异常。
+  方法内执行throw语句时会抛出一个异常，一般形式如：throw exception_object;
+  throw语句创建了一个异常对象 exception_object ，如： throw new IOException(); 这个语句创建类IOException的一个新对象并抛出它。抛出异常类型时也应该尽可能地具体。
+    相应地，在说明方法时，要使用这个格式： 访问权限修饰符 返回值类型 方法名(参数列表) throws 异常列表
+    紧接在关键字throws后面的是该方法内可能发生且不进行处理的所有异常列表。各异常之间用逗号分隔。例如：public void troubleSome() throws IOException
+    一般地，如果一个方法引发了一个异常，而它自己又不处理，就要由调用者方法进行处理。如果方法内含有一个抛出异常的throw语句，则要在方法头添加一个throws子句，而不是在方法体内捕获异常。一般地，抛出异常及捕获异常应该在不同的方法内。
+    在方法头中用Java保留字throws来声明这个方法可能抛出的异常；在方法体中用保留字throw实际抛出一个异常。  注意，这两个保留字不要混淆；
+
+第三章小结：包是Java大的独特概念，与此相关的语句包括package语句和import语句。
+本章详细介绍了各主要语句的语法格式，使用它们可以编写出基本的程序。此外还介绍了简单的输入/输出语句。
+要编写稳定性强的程序，必须对可鞥出现的错误进行处理。Java提供了异常处理机制，本章详细介绍了异常处理的概念及处理机制，包括try、catch、finally、throw 和 throws 的使用方法。介绍了预定义的若干异常，以及编写程序时要注意的事项。
+
+
+第四章 面向对象程序设计：
+第一节、类和对象：
+
+
+  
+
+  
+
+
+
+
+
+
   
 
   

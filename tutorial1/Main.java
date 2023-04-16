@@ -194,12 +194,13 @@ public class Main {
         lvl.setLvl(2);
         System.out.println(lvl.getLvl());
 
-
-
-
-
-
+        //switch语句是如何执行的？
         
+
+
+
+
+
 
 
     }
