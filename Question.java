@@ -1,3 +1,5 @@
+import java.util.Vector;
+
 class Question {
 
     // 方法 int getNum(int n）的功能是返回 整数n的位数
@@ -30,6 +32,18 @@ class Question {
         d = (a + b * 3) % c >> 1;
         System.out.println(d);
    }
+
+   // Vector添加元素
+   public static void myVectorMethod() {
+    Vector<Double> myVector = new Vector<Double>();
+    for (int i = 1; i <= 10; i++) {
+        myVector.addElement(Math.random());
+    }
+    System.out.println(myVector.elementAt(5) + "\t");
+    myVector.insertElementAt(55555d, 5);  // 插入在下标为5的位置，原来这个位置及后续各位置的元素均后移一位。
+    System.out.println(myVector.elementAt(6) + "\t");
+   }
+
     public static void main(String[] args) {
         System.out.println(getNum(55));
         System.out.println(maxDigit(265));
@@ -43,6 +57,7 @@ class Question {
         b = a &&(b||c);
         c = b && a && c;
         System.out.println(a+ " and " + b + " " + c);
+        myVectorMethod();
 
         
     }
