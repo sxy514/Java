@@ -668,6 +668,63 @@
 
 第六章 继承与多态
 第一节、子类：
+  Java中的类层次结构为树状结构，这和自然界中描述的一个事物是类似的。例如，可以将动物划分为哺乳类动物及爬行类动物，然后又对这两类动物继续细分。
+  在Java中，可以将哺乳类动物和爬行类动物作为两个类，然后再定义一个动物类，哺乳类动物和爬行类动物都是动物类的子类。这样，就形成了一个类的继承关系。子类与父类的关系是：子类对象" is a "父类对象，也就是说，子类中的任何一个成员也是父类中的一个成员。
+  在Java中，使用extends关键字来表示继承关系。使用继承这一面向对象的特性，可以支持软件的可复用性，保证了代码可以在类之间共享。
+  1. is a 关系：
+    在程序中，有时要建立关于某对象的模型，比如说雇员Employee，然后从这个最初的模型派生出多个具体化的版本，如经理Manager。显然，一名Manager首先是一名Employee，他具有Empolyee的一般特性。此外，Manager还有Empolyee所不具有的额外特性。
+    对于Employee，可能具有的属性信息包括名字、受雇时间、生日及其他相关信息等，而对于Manager，可能还具有所管理的团队等属性信息。为此，定义两个类来表示它们。
+    例如：具有一般性和特殊性的两个类：
+    public class Employee {                 // 具有一般性的类
+      private String name, jobTitle;
+      private DatehireDate, dateOfBirth;
+      private int grade;
+      ...
+    }
+    public class Manager {                 // 具有特殊性的类
+      private String name, jobTitle;
+      private DatehireDate, dateOfBirth;
+      private int grade;                   // 以上是与Employee共有的属性
+      private String department;           // 特有的属性
+      private Employee[] subordinates;     // 特有的属性
+      ...
+    }
+    从上面的定义可以看出，Manager类和Employee类之间存在重复部分。实际上，适用于Employee的很多属性和方法可以不经修改就被Manager所使用。Manager与Employee之间存在"is a"关系，即Manager "is a" Employee。
+    使用 "is a" 关系要特别注意，有些对象之间虽然也是"大"与"小"的关系，但并不是一般与特殊的关系，例如汽车又包括了车身与发动机，但不能说它们之间存在"is a"关系，它们只能是整体与部分的关系，一般地称为"has a"关系。
+
+  2. extends关键字：
+    与一般的面向对象语言一样，Java提供了派生机制，允许程序员用以前已定义的类来定义一个新类。新类称作子类，原来的类称作父类，也称为基类或超类。两个类中共同的内容放到父类中，特殊的内容放到子类中。在定义类时可以表明一个类是不是另一个类的子类。
+    在Java中，使用extends关键字来表示继承，格式如下：
+      修饰符 class 子类名 extends 父类名 {
+        类体
+      }
+    例如，public class A extends B 表示A类派生于B类，A类是子类，B类是父类。如果一个类的定义中没有出现extends关键字，则表明这个类派生于Object类。Java中预定义及程序员自己定义的任何类都直接或间接地继承于Object类，Object类是所有类的父类或祖先类。
+    再来考虑之前的Employee类和Manager类，很明显，它们具有"is a"关系，所以可以使用派生机制来表示它们，即可以从Empolyee类派生处Manager类，现在重新定义这两个类。
+      public class Employee {
+        private String name, jobTitle;
+        private DatehireDate, dateOfBirth;
+        private int grade;
+        ...
+      }
+      public class Manager extends Employee {     // 派生子类
+        private String department;                // 只列出Employee类中没有的属性
+        private Employee[] subordinates;
+        ...
+      }
+    Manager类中有Empolyee类的所有变量和方法，所有这些变量和方法都继承于父类中的定义。子类中只是定义额外的特性，或者进行必要的修改。
+    派生机制改善了程序的可维护性，增加了可靠性。对父类Employee所做的修改延伸至子类Manager类中。
+
+  3. Object类：
+    Object类是Java程序中所有类的直接或间接父类，处在类层次的最高点。所有其他的类都是从Object类派生而来的。Object类包含了所有Java类的公共属性，其构造方法是Object()。
+    类中主要的方法如下：
+      (1)、public final Class getClass(): 获取当前对象所属的类信息，返回Class对象。
+      (2)、public String toString():  按字符串对象返回当前对象本身的有关信息。
+      (3)、public boolean equals(Object obj): 比较两个对象是否是同一个对象，是则返回true。
+    关于对象相等的判别，在Java中有两种方式。一种是使用==运算符，另一种是使用equals()方法。这两种方式判定的都是两个对象是否是同一个对象(称为同一)。如果两个对象具有相同的类型及相同的属性值，则称为相等。同一的对象一定相等，但相等的对象不一定同一。如下：
+    
+
+
+
   
     
 
