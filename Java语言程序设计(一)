@@ -720,8 +720,62 @@
       (1)、public final Class getClass(): 获取当前对象所属的类信息，返回Class对象。
       (2)、public String toString():  按字符串对象返回当前对象本身的有关信息。
       (3)、public boolean equals(Object obj): 比较两个对象是否是同一个对象，是则返回true。
-    关于对象相等的判别，在Java中有两种方式。一种是使用==运算符，另一种是使用equals()方法。这两种方式判定的都是两个对象是否是同一个对象(称为同一)。如果两个对象具有相同的类型及相同的属性值，则称为相等。同一的对象一定相等，但相等的对象不一定同一。如下：
+    关于对象相等的判别，在Java中有两种方式。一种是使用==运算符，另一种是使用equals()方法。这两种方式判定的都是两个对象是否是同一个对象(称为同一)。如果两个对象具有相同的类型及相同的属性值，则称为相等。同一的对象一定相等，但相等的对象不一定同一。
+    相等判别示例：
+      class BankAccount {
+        private String OwnerName;
+        private int AccountNumber;
+        private float Balance;
+        BankAccount(String name, int num1, float num2) { // 构造方法
+          OwnerName = name;
+          AccountNumber = num1;
+          Balance = num2;
+        }
+        String getOwnerName() {  //返回名字
+          return OwnerName;
+        }
+        int getAccountNumber() { // 返回账号
+          return AccountNumber;
+        }
+        float getBalance() {  // 返回余额
+          return Balance;
+        }
+      }
+      public class EqualsTest {
+        public static void main(String args[]) {
+          BankAccount a = new BankAccount("张三", 123456, 1000.0f);
+          BankAccount b = new BankAccount("张三", 123456, 1000.0f);
+          // BankAccount b = a;  // 创建b的另一种方式
+          if (a.equals(b)) {
+            System.out.println("equals_YES");
+          } else {
+            System.out.println("equals_NO");
+          }
+          if (a == b) {
+            System.out.println("==_YES");
+          } else {
+            System.out.println("==_NO");
+          }  
+        }
+      }
+    输出分别是equals_NO和==_NO，即两种方式下判定的都是同一性。由于a和b是两个独立的对象，故它们不是同一的。如果对象b不是使用new操作符来创建，而是通过赋值语句b = a来创建(如上注释掉的语句)，再来判定两个对象的相等性时，会看到输出分别是equals_YES和==_YES。
+    要判断两个对象各个属性域的值是否相同，不能使用从Object类继承来的equals方法，而需要在类声明种对equals方法进行覆盖，即重新修改这个方法。例如，String类种已经重写了Object类的equals方法，故可以判定两个字符串的内容是否相同。如下，在BankAccount类中添加equals方法：
+    public boolean equals(Object x) {
+      if(this.getClass() != x.getClass())   // 具有相同的类型
+        return false;
+      BankAccount b = (BankAccount)x;
+      return((this.getOwnerName().equals(b.getOwnerName()))
+            &&(this.getAccountNumber() == b.getAccountNumber())
+            &&(this.getBalance() == b.getBalance())); // 判定各个成员变量的值是否相等
+    }
+    重写的equals方法判定的是对象种的值是否相等，再次运行相等判别示例，得到的输出分别是equals_YES和==_NO。即虽然不是同一个对象，但各属性的值是对应相等的。
+
+  4. 单重继承：
+    Java是完全的面向对象语言，具有完全的OOP能力。在类的继承机制中，它抛弃了多重继承功能，仅实现了单重继承机制。
+    多重继承是指从多个类共同派生一个子类，即一个类可以有多个父类。多重继承关系类似于一个网。如果子类的多个父类有同名的方法和属性，那么容易造成子类实例的混乱。这是多重继承不可克服的缺点。在Java中抛弃了多重继承，只允许单重继承。虽然如此，并没有减弱Java在继承方面的能力。
+    Java中提供了接口这个概念，这是一种特殊的类，多重继承的能力通过接口来实现。总之，在Java中，如果一个类有父类，则其父类只能有一个，也就是只允许从一个类中拓展类。这条限制称为单重继承。
     
+
 
 
 
