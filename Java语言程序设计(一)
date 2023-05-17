@@ -836,7 +836,7 @@
     当子类重写父类方法时，子类与父类使用的是相同的方法名及参数列表，但可以执行不同的功能，当然子类中也可以什么都不做。利用方法隐藏机制，子类对象的操作可以与父类中定义的不完全一样，甚至是完全不一样，从而满足了灵活性的要求。要注意的是，覆盖的同名方法中，子类方法不能比父类方法的访问权限更严格。
     例如，如果父类中方法method()的访问权限是public，则子类中就不能含有private的method()，否则，会出现编译错误。
     注意，如果方法名相同，而参数列表不同，则是对方法的重载。调用重载方法时，编译器将根据参数的个数和类型，选择对应的方法执行。重载的方法属于同一个类，覆盖的方法分属于父类，子类中。
-    以Employee类和Manager类中的方法为例，重写方法。
+    以Employee类和Manager类中的方法为例，重写方法(例6.7)。
       public class Employee {
         String name;
         int salary;
@@ -869,7 +869,7 @@
         }
       }
     如果子类已经重写了父类中的方法，但在子类中还想使用父类中被隐藏的方法，可以使用super关键字。
-    如下是super关键字的使用示例：
+    如下是super关键字的使用示例(例6.3)：
       class SuperClass {
         void showMyPosition() {
           System.out.println("This is the superClass!");
@@ -930,9 +930,111 @@
       }
     
   3. 多态
-    在Java中，多态是一个重要概念。有了多态，能够允许同一条方法调用指令在不同的上下文中做不同的事情。
-    
+    在Java中，多态是一个重要概念。有了多态，能够允许同一条方法调用指令在不同的上下文中做不同的事情。以例6.3中定义的3个类及例6.7中重写的方法为例。Manager类与Employee类之间具有"is a"关系，Manager得到了父类Employee的所有可继承属性，包括数据成员和方法成员。
+    这意味着对Employee对象合法的操作，对Manager对象也合法。两个类中都有getDetails()方法，实际上是子类覆盖了父类中的方法。现在假定声明了如下两个实例。
+      Employee e = new Employee();
+      Manager m = new Manager();
+    此时，e.getDetails()和m.getDetails()将执行不同的代码。e.getDetails()调用的是Employee类中的getDetails()方法，而m.getDetails()调用的是Manager类中的getDetails()方法。这不难理解。
+    但如果向这样创建实例：Employee e = new Manager(); 那么e.getDetails()将调用哪个方法呢？这引出对象是多态(Polymorphism)的概念。对象e可以有Manager的形式，也可以有Employee的形式。
+    重载一个方法名可以看作是多态的，父子类之间直接或间接重写的方法名要由对象在运行时确定将调用哪个方法，这也是多态。
+    实际上，这正是面向对象语言的一个重要特性。Java规定，这种情况下要执行的是与对象真正类型(运行时类型)相关的方法，而不是与引用类型(编译时类型)相关的方法。
+    变量的静态类型是出现在声明中的类型。例如，变量e的静态类型是Employee。静态类型也称为引用类型，是在代码编译时确定下来的。运行过程中某一时刻变量指向的对象的类型称为动态类型，这是它此刻的真正类型。变量的动态类型会随运行进程而改变。本例中e的动态类型是Manager。
+    调用稍后可能被覆盖的方法的这种处理方式，称为动态绑定或后绑定。动态绑定一定要到运行时才能确定要执行的方法代码。在编译过程中能确定调用方法的处理方式，称为静态绑定或前绑定。
+    例6.10 多态示例
+      class SuperClass {
+        public void method() {
+          System.out.println("SuperClass!");
+        }  
+      }
+      class SubClass extends SuperClass {
+        public void method() {           // 覆盖方法
+          System.out.println("SubClass!");
+        }
+      }
+      public class Test {
+        public static void main(String args[]) {
+          SuperClass sup = new SuperClass();  // 静态类型与动态类型一致
+          SubClass sub = new SubClass();      // 静态类型与动态类型一致
+          SuperClass sup1 = new SubClass();   // 静态类型与动态类型不一致
+          super.method();                     // 调用父类方法，输出SuperClass!
+          sub.method();                       // 调用子类方法，输出SubClass!
+          sup1.method();                      // 调用子类方法，输出SubClass!
+        }
+      }
+    sub1声明的类型是SuperClass，但它指向的是SubClass的实例，所以，sub1.method()调用的是实例所属类(子类)的方法而不是所声明的类(父类)的方法。
 
+第三节、终极类与抽象类：
+  Java中有一个重要的关键字final,它表示终极，既可以修饰一个类，也可也修饰类中的成员变量或成员方法。顾名思义，用这个关键字修饰的类或类成员都是不能改变的。如果一个类被定义为final，则它不能有子类；如果一个方法被定义为final，则不能被覆盖；如果一个变量被定义为final，则它的值不能被改变。
+  与之相对应的是关键字abstract，它可以用于类或方法，表示抽象。使用abstract修饰的方法的方法体为空，修饰的类必须被子类继承。
+  1. 终极类：
+    有时一些类不能被继承。Java中预定义的类Java.lang.String就是如此。这样做的目的是为了保证如果一个方法中有一个指向String类的引用，那么它肯定就是一个真正的String类型，而不是一个已被更改的String的子类。
+    另外一种情况是某个类的结构和功能已经很完整，不需要生成它的子类，这是也应该在这个类的声明中以关键字final进行修饰。被标记为final的类将不能被继承，这样的类称为终极类或终态类，其声明的格式为：
+      final class 终极类名 {
+        类体
+      }
+    例6.11 定义一个final类FinalClass，当试图派生它的子类时，会导致错误。
+      final public class FinalClass {
+        int memberar;
+        void memberMethod() {
+        System.out.println("This is a final class!");
+        } 
+      }
+      class subFinalClass extends FinalClass {   // 错误，不能继承终极类
+        int memberar;
+        void memberMethod() {
+          System.out.println("This is a sub final class!");
+        }
+      }
+
+  2. 终极方法：
+    成员方法也可被标记为final，从而成为终极方法或终态方法。被标记为final的方法将不能被覆盖，从而可以确保被调用的方法是最原始的方法，而不是已被更改的子类中的方法。另外，把方法标记为final有时也被用于优化，从而提高编译运行效率。终极方法的定义格式为：
+      final 返回类型 方法名(参数表) {
+        方法体
+      }
+    例6.12 定义一个final方法，当试图在子类中覆盖它时，会导致错误。
+      class FinalMethod {
+        final void method() {
+          System.out.println("This is a final method!");
+        }
+      }
+      class subFinalMethod extends FinalMethod {
+        void method() {   // 错误，不能覆盖终极方法
+          System.out.println("This is a sub final method!");
+        }
+      }
+    
+  3. 终极变量：
+    一个变量被标记为final，称为终极变量或终态变量。实际上它会成为一个常量。企图改变终极变量的值将引起编译错误。
+    例6.13 不能改变终极变量的值：
+      class Const {
+        final float PI = 3.14f;     // 终极变量
+        final String language = "Java";
+      }
+      public class UseConst {
+        public static void main(String args[]) {
+          Const c = new Const();
+          c.PI = 3.1415926f;         // 错误，不能改变终极变量的值
+        }
+      }
+    当程序中需要使用一些特殊用途的常量时，可以将它们定义在一个类中，其他的类通过引入该类来直接使用这些常量。这样可以保证常量使用的统一，并为修改提供了方便。
+    如果将一个引用类型的变量标记为final，那么这个变量将不能再指向其他对象，但它所指对象中的属性值还是可以改变的。
+    例6.14 终极引用的使用示例： 
+      class Car {
+        int number = 123;
+      }
+      Class FinalVariable {
+        public static void main(String agrs[]) {
+          final Car mycar = new Car();   // 终极引用
+          mycar.number = 456;            // 可以，修改的是mycar指向的内存中的值
+          mycar = new Car();             // 错误，不能修改mycar本身的值
+        }
+      }
+    在这里，改变变量mycar的成员变量number的值是可以的，但如果试图用mycar指向其他对象就会引起错误。
+  
+  4. 抽象类：
+    在程序设计过程中，有时需要创建某个类代表一些基本行为，并为其规范定义一些方法，但是又无法或不宜在这个类中就对这些行为加以具体实现，而希望在其子类中根据实际情况再去实现这些方法。
+    例如，设计一个名为Drawing的类，它代表了不同绘图工具的绘图方法，但这些方法必须以平台无关的方法实现。很显然，在使用一台机器的硬件的同时，又要做到平台无关是不太可能的。因此解决的方法是，在这个类中只定义应该存在什么方法，而具体实现这些方法的工作由依赖于具体平台的子类去完成。
+    像Drawing类这种定义了方法但没有定义具体实现的类称为抽象类。在Java中可以通过关键字abstract把一个类定义为抽象类，每一个未被定义具体实现的方法也应标记为abstract，这样的方法称为抽象方法。
 
 
 
