@@ -1035,14 +1035,171 @@
     在程序设计过程中，有时需要创建某个类代表一些基本行为，并为其规范定义一些方法，但是又无法或不宜在这个类中就对这些行为加以具体实现，而希望在其子类中根据实际情况再去实现这些方法。
     例如，设计一个名为Drawing的类，它代表了不同绘图工具的绘图方法，但这些方法必须以平台无关的方法实现。很显然，在使用一台机器的硬件的同时，又要做到平台无关是不太可能的。因此解决的方法是，在这个类中只定义应该存在什么方法，而具体实现这些方法的工作由依赖于具体平台的子类去完成。
     像Drawing类这种定义了方法但没有定义具体实现的类称为抽象类。在Java中可以通过关键字abstract把一个类定义为抽象类，每一个未被定义具体实现的方法也应标记为abstract，这样的方法称为抽象方法。
+    与一般的父类一样，在抽象类中可以包括被它的所有子类共享的公共行为，以及被它的所有子类共享的公共属性。在程序中不能用抽象类作为模板来创建对象，必须生成抽象类的一个非抽象的子类后才能创建实例。
+    抽象类可以包含常规类能够包含的任何成员方法，因为子类可能需要继承这些方法。当然抽象类中也可包含构造方法。
+    抽象类中通常会包含抽象方法，这种方法只有方法的声明，而没有方法的实现。这些方法将在抽象类的子类中被实现。除了抽象方法，抽象类中也可以包含非抽象方法，反之，不能在非抽象的类中定义抽象方法。也就是说，只有抽象类才能具有抽象方法。
+    如果一个抽象类除了抽象方法外什么都没有，则使用接口更合适。
+      抽象类和抽象方法的定义格式如下：
+        public abstract class 抽象类名 {
+            类体
+        }
+        public abstract 返回值类型 抽象方法名(参数列表); // 抽象方法
+    例6.15 抽象类示例：
+      abstract class Employee {
+        int basic = 2000;
+        abstract void salary();   // 抽象方法
+      }
+      class Manager extends Employee {
+          void salary() {                             // 子类中的实现
+          System.out.println("薪资等于:  " + basic * 5);
+        }
+      }
+      class Works extends Employee {
+        void salary() {                               // 子类中的实现
+          System.out.println("薪资等于:  " + basic * 2);
+        }
+      }
+    例6.16 抽象类示例：
+      abstract class ObjectStorage {
+        int objectnum = 0;
+        Object storage[] = new Object[100];
+        abstract void put(Object o);      // 抽象方法，没有方法体
+        abstract Object get();           // 抽象方法
+      }
+      class Stack extends ObjectStorage {
+        private int point = 0;
+        public void put(Object o) {           
+          storage[point++] = o;
+          objectnum++;
+        }
+        public Object get() {                 // 实现不同
+          objectnum--;
+          return storage[--point];
+        }
+      }
+      class Queue extends ObjectStorage {
+        private int top = 0, bottom = 0;
+        public void put(Object o) {           
+          storage[top++] = o;
+          objectnum++;
+        }
+        Object get() {                 // 实现不同
+          objectnum--;
+          return storage[bottom++];
+        }
+      }
+    在这里，ObjectStorage类定义的是一般化的存储结构，其中包括成员变量objectnum和storage，分别用来记录存入的元素个数及元素本身。
+    两个成员方法put()和get()只用来说明对于这样的存储结构应该具有存入和取出这两种基本操作，但是对于这两种操作的具体实现则依赖于具体的存储结构，因此，这两个方法被定义为抽象方法。相应地，ObjectStorage类也就成为抽象类，不论是类还是方法都要用关键字abstract进行修饰。
+    抽象类的子类所继承的抽象方法同样还是抽象方法，除非提供了其父类中所有抽象方法的实现代码，否则子类还是抽象类。具体到本例，在ObjectStorage类的子类中，只有实现了put()和get()方法，这个子类才不是抽象类。
+    一个抽象类中可以包含非抽象方法和成员变量。更明确地说，包含抽象方法的类一定是抽象类，但抽象类中的方法不一定都是抽象方法。
+    抽象类是不能创建对象的，除非通过间接的方法来创建其子类的对象，但是可以定义一个抽象类的引用变量。也就是说，程序中形如new ObjectStorage()的表示是错误的，但如果子类Stack不再是抽象类，则这个语句就是正确: ObjectStorage obst = new Stack()。
+
+第四节、接口
+  接口是体现抽象类功能的另一种方式，可将其想象为一个“纯”的抽象类。它允许创建者规定一个类的基本形式，包括方法名、参数列表以及返回值类型，但不规定方法体。因此在接口中所有的方法都是抽象方法，都没有方法体。从这个角度上讲，可以把接口看成是特殊的抽象类，接口与抽象类都用来定义多个类的共同属性。
+  接口还可以实现与抽象类不同的功能。具体来说，Java不支持多重继承的概念，一个类只能从唯一的一个类继承而来。但是，这并不意味着Java不能实现多重继承的功能。具体来说，Java允许一个类实现多个接口，从而实现了多重继承的能力，并具有更清晰的结构。
+  1. 接口的定义：
+    接口的定义格式为：
+      [接口修饰符] interface 接口名 [extends 父接口列表] {
+        // 方法原型或静态变量
+      }
+    接口与一般类一样，本身也具有数据成员变量与方法，但数据成员变量一定要赋初值，且此值不能再更改，而方法必须是“抽象方法”。
+    仿照例6.16，例3.17使用接口的方式重写定义了一个存储字符的数据结构。
+    例6.17 接口的定义： 
+      interface CharStorage {   // 使用interface说明
+        void put(char c);      // 抽象方法，没有方法体
+        char get();            // 抽象方法
+      }
+    这个接口仅仅说明了一种数据存储结构中存在存入(put)和取出get()这样两种操作，并没有涉及具体实现。在应用时，还需要根据具体的存储结构来实现。
+    在接口中定义的成员变量都默认为终极静态变量，即系统会将其自动添加final和static这两个关键字，并且对该变量必须设置初值。
+
+  2. 接口的实现：
+    接口的实现与类的继承是相似的，不过，实现接口的类不能从该接口的定义中继承任何行为。在实现该接口的类的任何对象中，都能够调用这个接口中定义的方法。一个类可以同时实现多个接口。
+    要实现接口，可以在类的声明中用关键字implements来表示。接口中的所有抽象方法必须在类或子类中实现。implements语句的格式如下：
+      class Stack implements CharStorage {
+        private char mem[] = new char[10];
+        private int point = 0;
+        public void put(char c) {
+          mem[point] = c;
+          point++;
+        }
+        public char get() {
+          point--;
+          return mem[point];
+        }
+      }
+    例6.19 接口的实现：
+      public interface Insurable {      // 定义接口
+        public int getPolicyNUmber();   // 抽象方法
+        public int getCoverageAmount();
+        public double calculatePremium();
+        public Date getExpiryDate();
+      }
+      public class Car implements Insurable {         // 接口的实现
+        public int getPolicyNumber() { ... }          // 获取保险单号的代码  
+        public double calculatePremium() { ... }      // 计算保费的代码
+        public Date getExpiryDate() { ... }           // 获取保险到期日的代码
+        public int getCoverageAmount() { ... }        // 获取投保金额的代码
+      }
+    Java程序中，可以在implements后面声明多个接口名，也就是一个类可以实现多个接口。接口实际上就是一个特殊的抽象类，同时实现多个接口也就意味着具有多重继承的能力。
+    由于在接口中的方法多是抽象方法，并不包含任何的具体代码，对这些抽象方法的实现都在具体的类中完成，因此，即使不同的接口中有同名的方法，类的实例也不会混淆。这正是Java取消了显式的多重机制，但还保留了多重继承的能力之所在。
+    例如，在AWT事件处理中要经常用到接口。下面语句定义的类将实现所有鼠标事件的接口。
+      public class MouseEventClass implements MouseListener, MouseMotionListener {
+        ... // 所有方法的实现
+      }
+    如果查询Java的API文档就会发现，在MouseListener和MouseMotionListener两个接口中，分别定义了对鼠标进行各种操作时的响应。由于类MouseEventClass声明为同时实现这两个接口，因此，在实现时，该类一定要实现这两个接口中的所有方法，否则必须用abstract继续声明为抽象类。
+    在实际应用中，并非接口里的所有方法都需要用到。这时有一个简单的方法，即用一对大括号来表示一个方法的空方法体。例如，在鼠标事件的接口(MouseListener和MouseMotionListener)中共定义了6种事件，假设程序不要求MouseUp事件进行任何响应，则代码可以写为: 
+      public void MouseUp(Event e) {} // 不进行任何响应
+    实现一个接口的类也必须实现此接口的父接口。
+    程序6.4 是一个接口应用实例。定义一个接口Shape2D，利用它来实现对二维几何图形类Circle和Rectangle的操作。对二维的几何图形而言，面积的计算是很重要的，因此可以把计算面积的方法声明在接口里。求面积时使用的pi值是常量，可以把它声明在接口的数据成员里。
+      程序6.4 接口应用示例：
+        interface Shape2D {
+          final double pi = 3.1415926;     // 常量
+          public abstract double area();   // 抽象方法
+        }
+        // 定义Circle与Rectangele两个类，它们都实现了Shape2D接口
+        class Circle implements Shape2D {
+          double radius;
+          public Circle(double r) { radius = r; }           // 构造方法
+          public double area() { return pi * radius * radius; } // 计算面积
+        }
+        class Rectangle implements Shape2D {
+          int width, height;
+          public Rectangle(int w, int h) { width = w; height = h; } // 构造方法
+          public double area() { return width * height; }            // 计算面积
+        }
+        // 定义测试类
+        public class InterfaceTester {
+          public static void main(String args[]) {
+            Circle c = new Circle(2.0);
+            System.out.println("圆的面积是：" + c.area());
+            Rectangle r = new Rectangle(5, 6);
+            System.out.println("矩形的面积是：" + r.area());                       
+          }
+        }
+    在接口的定义中，Java允许省略定义数据成员的final关键字、方法的public及abstract关键字，因此程序6.4中的接口也可以是这样的的：
+      interface Shape2D {
+        double pi = 3.1415926;     // 数据成员一定要初始化
+        double area();             // 抽象方法
+      }  
+    不能直接由接口来创建对象，而必须通过由实现接口的类来创建。同抽象类一样，使用接口名作为一个引用变量的类型也是允许的，既可以声明接口类型的变量(或数组)，并用它来访问对象。该引用可以用来指向任何实现了该接口的类的实例。使用时将根据动态绑定的原则，视该变量所指向的具体实例来进行操作。
+    例如：
+      public class VariableTester { 
+        public static void main(String args[]) {
+          Shape2D var1, var2;             // 接口类型的变量
+          var1 = new Rectangle(5 , 6);    // 接口引用指向类的实例
+          System.out.println("矩形的面积是：" + var1.area());
+          var2 = new Circle(2.0);         // 接口引用指向类的实例
+          System.out.println("圆的面积是：" + var2.area());
+        }
+      }
+
+第六章小结：
+  本章继续介绍有关面向对象的内容。介绍子类与继承、方法的覆盖和多态等概念，此外还介绍了终极类及抽象类的概念及用法。接口也是重要的概念，是实现多重继承的唯一途径，本章也介绍了接口及类实现接口的方式。
+  本章的内容是面向对象程序设计的精髓所在，要能使用extends关键字声明子类，能够正确进行对象转型。要能够区分方法覆盖于方法重载，能够掌握调用本类及父类中的方法、覆盖父类中的方法，从而全面掌握多态的概念。
 
 
-
-
-
-
-    
-
+第七章、输入和输出流
+  
 
 
      
