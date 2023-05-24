@@ -1247,13 +1247,13 @@
     同样可以使用FileOutputStream向文件中输出字节。
     使用文件数据流进行I/O操作时，对于FileInputStream类的实例对象，如果所指定的文件不存在，则产生FileNotFoundException异常。由于它是非运行时异常，因此必须加以捕获或声明。对于FileOutputStream类的实例对象，如果指定的文件不存在，则系统会创建一个新文件；如果存在，那么新写入的内容将会覆盖原有数据。
     如果在读、写文件或生成新文件时发生错误，则会产生IOException异常，也需要由程序员捕获并处理。
-    例7.2 文件数据流示例：
+    例7.1 文件数据流示例：
       import java.io.*;
       public class Test{
         public static void main(String[] args) {
 
           try {  
-            FileOutputStream out = new FileOutputStream("a.txt");
+            FileOutputStream out = new FileOutputStream("myFile.dat");
             out.write('A');
             out.write('B');
             out.close();
@@ -1265,6 +1265,108 @@
         }  
       }
     可以使用FileInputStream来读取FileOutputStream输出的数据。
+    例7.2 读写示例：
+      import java.io.*;
+      public class Test{
+        public static void main(String[] args) {
+          try {
+            FileInputStream in = new FileInputStream("myFile.dat");
+            while(in.available() > 0)
+              System.out.print(in.read() + " ");
+            in.close();
+          } catch(FileNotFoundException e) {
+            System.out.println("Error: Cannot open file for reading. ");
+          } catch(EOFEXception e) {
+            System.out.println("Error: EOF encountered,file may be corrupted. ");
+          } catch(IOException e) {
+            System.out.println("Error: Cannot read from file. ");
+          }
+        }
+      }
+  
+  2. 过滤器数据流：
+    本小节介绍另外一种数据流，即过滤器(filter)。一个过滤器数据流在创建时与一个已经存在的数据流相连，这样在从这样的数据流中读取数据时，它提供的是对一个原始输入数据流的内容进行了特定处理的数据。
+    2.1 缓冲区数据流：
+      缓冲区数据流由BufferedInputStream和BufferOutputStream，它们是在数据流上增加了一个缓冲区，都属于过滤器数据流。当读写数据时，数据以块为单位先进入缓冲区(块的大小可以进行设置)，其后的读写操作则作用于缓冲区。
+      采用这个办法可以降低不同硬件设备之间速度的差异，提高I/O操作的效率。与此同时，这两个流还提供了对mark()、reset()和skip()等方法的支持。
+      在创建该类的实例对象时，可以使用两种方法，一种是使用默认缓冲区的大小，例如：
+        FileInputStream fis = new FileInputStream("myFile");
+        InputStream is = new BufferedInputStream(fis);
+        FileOutputStream fos = new FileOutputStream("myFile");
+        OutputStream os = new BufferedOutputStream(fos);
+      另一种是自行设置缓冲区的大小，例如：
+        FileInputStream fis = new FileInputStream("myFile");
+        InputStream is = new BufferedInputStream(fis, 1024);
+        FileOutputStream fos = new FileOutputStream("myFile");
+        OutputStream os = new BufferedOutputStream(fos, 1024);
+      一般在关闭一个缓冲区输出流之前，应先使用flush()方法，强制输出剩余数据，以确保缓冲区内的所有数据全部写入输出流。
+    
+    2.2 数据数据流：
+      在前面提到的数据流中处理的数据都是指字节或字节数组，这是进行数据传输时系统默认的数据类型。但实际上所处理的数据并非只有这两种类型，遇到这种情况时就应用一种专门的数据流来处理。
+      DataInputStream和DataOutputStream就是这样的两个过滤器数据流，它们允许通过数据流来读写Java基本类型，包括布尔型(boolean)、浮点型(float)等。假设is和os分别是前面已经建好的输入/输出数据流对象，则数据流的创建方式如下。
+        DataInputStream dis = new DataInputStream(is);
+        DataOutputStream dos = new DataOutputStream(os);
+      在这两个类中之所以能够对这些基本类型进行操作，是因为它们提供了一组特定的方法来操作不同的基本类型。例如，在DataInputStream类中，提供了如下一些方法。
+        ①byte readByte()
+        ②long readLong()
+        ③double readDouble()
+        ④boolean readBoolean()
+        ⑤String readUTF()
+        ⑥int readInt()
+        ⑦float readFloat()
+        ⑧short readShort()
+        ⑨char readChar()
+      从方法名字就可以判断出，上述方法分别对byte、long、double和boolean等类型进行读取。
+      相应的，在DataOutputStream类中提供了如下的方法。
+        ①void writeByte(int b)
+        ②void writeLong(long l)
+        ③void writeDouble(double d)
+        ④void writeBoolean(boolean b)
+        ⑤void writeUTF(String str)
+        ⑥void writeInt(int i)
+        ⑦void writeFloat(float f)
+        ⑧void writeShort(short s)
+        ⑨void writeChar(char c)
+      同样地，上述方法分别对byte、long、double和boolean等类型进行写入。
+      可以看出DataInputStream的方法与DataOutputStream的方法都是成对出现的。
+      如果查询API文档，就会发现在这两个数据流中也都定义了对字符串进行读写的方法，但是，由于字符编码的原因，应该避免使用这些方法。后面将要讲到Reader和Writer重载了这两个方法，当对字符串进行操作时应该使用Reader和Writer两个系列类中的方法。
+
+    3. 对象流
+      Java中的数据流不仅能对基本数据类型的数据进行操作，而且也提供了把对象写入文件数据流或文件数据流中读出的功能，这一功能是通过java.io包中的ObjectInputStream和ObjectOutputStream两个类来实现的。能够输入/输出对象的流称为对象流。
+      3.1 写对象数据流：
+        例7.2中的代码段将一个java.util.Date对象实例写入文件。
+        例7.2 对象流示例：
+          Date d = new Date();             // 一个对象d
+          FileOutputStream f = new FileOutputStream("date.ser");
+          ObjectOutputStream s = new ObjectOutputStream(f); // 输出文件
+          try {
+            s.writeObject(d);
+            s.close();                    // 将对象d写入文件，关闭文件
+          } catch(IOException) {
+            e.printStackTrace();
+          }
+      
+      3.2 读对象数据流：
+        读对象和写对象一样简单，但是要注意，方法readObject()把数据流以Object类型返回，返回内容应该在转换为正确的类名之后再执行该类的方法。
+        例7.3 对象流示例： 
+          Date d = null;                  
+          FileInputStream f = new FileInputStream("date.ser");
+          ObjectInputStream s = new ObjectInputStream(f); // 输入文件
+          try {
+            d = (Date)s.readObject();      // 读取对象
+            s.close();                     // 关闭文件
+          } catch(IOException e) {
+            e.printStackTrace();
+          }
+          System.out.println("Date serialized at " + d); 
+    
+    4. 序列化：
+      4.1 序列化的概念：
+        能够记录自己的状态以便将来得到复原的能力，称为对象的持久性(Persistence)。称一个对象是可持久的，意味着可以把这个对象存入磁盘，磁带，或传入另一台计算机保存在它的内存或磁盘中。也就是说，把对象存为某种永久存储类型。
+        对象通过数值来描述自己的状态，记录对象也就是记录下这些数值。把对象转换为字节序列的过程称为对象的序列化，把字节序列恢复为对象的过程称为对象的反序列化。序列化的主要任务是写出对象实例的数值。
+        序列化是一种用来处理对象流的机制，所谓对象流也就是将对象的内容进行流化。序列化时为了解决在对对象流进行读写操作时所英法的问题。
+        如果变量是另一个对象的引用，则引用的对象也要序列化。这个过程是递归的，保存的结果可以看作是一个对象网。
+
 
 
 
