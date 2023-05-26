@@ -1331,41 +1331,126 @@
       可以看出DataInputStream的方法与DataOutputStream的方法都是成对出现的。
       如果查询API文档，就会发现在这两个数据流中也都定义了对字符串进行读写的方法，但是，由于字符编码的原因，应该避免使用这些方法。后面将要讲到Reader和Writer重载了这两个方法，当对字符串进行操作时应该使用Reader和Writer两个系列类中的方法。
 
-    3. 对象流
-      Java中的数据流不仅能对基本数据类型的数据进行操作，而且也提供了把对象写入文件数据流或文件数据流中读出的功能，这一功能是通过java.io包中的ObjectInputStream和ObjectOutputStream两个类来实现的。能够输入/输出对象的流称为对象流。
-      3.1 写对象数据流：
-        例7.2中的代码段将一个java.util.Date对象实例写入文件。
-        例7.2 对象流示例：
-          Date d = new Date();             // 一个对象d
-          FileOutputStream f = new FileOutputStream("date.ser");
-          ObjectOutputStream s = new ObjectOutputStream(f); // 输出文件
-          try {
-            s.writeObject(d);
-            s.close();                    // 将对象d写入文件，关闭文件
-          } catch(IOException) {
-            e.printStackTrace();
-          }
+  3. 对象流
+    Java中的数据流不仅能对基本数据类型的数据进行操作，而且也提供了把对象写入文件数据流或文件数据流中读出的功能，这一功能是通过java.io包中的ObjectInputStream和ObjectOutputStream两个类来实现的。能够输入/输出对象的流称为对象流。
+    3.1 写对象数据流：
+      例7.2中的代码段将一个java.util.Date对象实例写入文件。
+      例7.2 对象流示例：
+        Date d = new Date();             // 一个对象d
+        FileOutputStream f = new FileOutputStream("date.ser");
+        ObjectOutputStream s = new ObjectOutputStream(f); // 输出文件
+        try {
+          s.writeObject(d);
+          s.close();                    // 将对象d写入文件，关闭文件
+        } catch(IOException) {
+          e.printStackTrace();
+        }
       
-      3.2 读对象数据流：
-        读对象和写对象一样简单，但是要注意，方法readObject()把数据流以Object类型返回，返回内容应该在转换为正确的类名之后再执行该类的方法。
-        例7.3 对象流示例： 
-          Date d = null;                  
-          FileInputStream f = new FileInputStream("date.ser");
-          ObjectInputStream s = new ObjectInputStream(f); // 输入文件
-          try {
-            d = (Date)s.readObject();      // 读取对象
-            s.close();                     // 关闭文件
-          } catch(IOException e) {
-            e.printStackTrace();
-          }
-          System.out.println("Date serialized at " + d); 
+    3.2 读对象数据流：
+      读对象和写对象一样简单，但是要注意，方法readObject()把数据流以Object类型返回，返回内容应该在转换为正确的类名之后再执行该类的方法。
+      例7.3 对象流示例： 
+        Date d = null;                  
+        FileInputStream f = new FileInputStream("date.ser");
+        ObjectInputStream s = new ObjectInputStream(f); // 输入文件
+        try {
+          d = (Date)s.readObject();      // 读取对象
+          s.close();                     // 关闭文件
+        } catch(IOException e) {
+          e.printStackTrace();
+        }
+        System.out.println("Date serialized at " + d); 
     
-    4. 序列化：
-      4.1 序列化的概念：
-        能够记录自己的状态以便将来得到复原的能力，称为对象的持久性(Persistence)。称一个对象是可持久的，意味着可以把这个对象存入磁盘，磁带，或传入另一台计算机保存在它的内存或磁盘中。也就是说，把对象存为某种永久存储类型。
-        对象通过数值来描述自己的状态，记录对象也就是记录下这些数值。把对象转换为字节序列的过程称为对象的序列化，把字节序列恢复为对象的过程称为对象的反序列化。序列化的主要任务是写出对象实例的数值。
-        序列化是一种用来处理对象流的机制，所谓对象流也就是将对象的内容进行流化。序列化时为了解决在对对象流进行读写操作时所英法的问题。
-        如果变量是另一个对象的引用，则引用的对象也要序列化。这个过程是递归的，保存的结果可以看作是一个对象网。
+  4. 序列化：
+    4.1 序列化的概念：
+      能够记录自己的状态以便将来得到复原的能力，称为对象的持久性(Persistence)。称一个对象是可持久的，意味着可以把这个对象存入磁盘，磁带，或传入另一台计算机保存在它的内存或磁盘中。也就是说，把对象存为某种永久存储类型。
+      对象通过数值来描述自己的状态，记录对象也就是记录下这些数值。把对象转换为字节序列的过程称为对象的序列化，把字节序列恢复为对象的过程称为对象的反序列化。序列化的主要任务是写出对象实例的数值。
+      序列化是一种用来处理对象流的机制，所谓对象流也就是将对象的内容进行流化。序列化时为了解决在对对象流进行读写操作时所引发的问题。
+      如果变量是另一个对象的引用，则引用的对象也要序列化。这个过程是递归的，保存的结果可以看作是一个对象网。
+      JDK1.1新增加了接口java.io.Serializable，并对Java虚拟机作了改动以支持将Java对象存为数据流的功能。Serializable接口中没有定义任何方法，只是作为一个标记来指示实现该接口的类可以进行序列化，而没有实现该接口的类的对象则不能长期保存其状态。
+      这意味着只有实现Serializable接口的类才能被序列化。当一个类声明实现Serializable接口时，表明该类加入了对象序列化协议。在Java中，允许可序列化的对象通过对象流进行传输。
+      例7.4 序列化示例：
+        import java.io.*;
+        public class Student implements Serializable {
+          int id;
+          String name;
+          int age;
+          String department;
+          public Student(int id, String name, int age, String department) {
+            this.id = id;
+            this.name = name;
+            this.age = age;
+            this.department = department;
+          }
+        }
+      要序列化一个对象，必须与特定的对象输出/输入流联系起来，通过对象输出流将对象状态保存下来，或是将对象保存到文件中，之后再通过对象输入流将对象状态恢复。
+      该功能是通过java.io包中的ObjectOutputStream和ObjectInputStream两个类实现的。前者用writeObject()方法可以直接将对象保存到输出流中，而后者用readObject()方法可以直接从输入流中读取一个对象。
+      例7.3 对象的存储示例：
+        import java.io.*;
+        public class Objectser implements Serializable {
+          public static void main(String args[]) {
+          Student stu = new Student(981036, "Li San", 16, "CSD");
+          try {
+            FileOutputStream fo = new FileOutputStream("data.ser");
+            ObjectOutputStream so = new ObjectOutputStream(fo);
+            so.writeObject(stu);
+            so.close();
+          } catch(Exception e) {
+              System.out.println(e);
+            }
+          }
+        }
+      对象的恢复程序示例如下：
+        import java.io.*;
+        public class ObjectRecov implements Serializable {
+          public static void main(String args[]) {
+            Student stu;
+            try {
+              FileInputStream fi = new FileInputStream("data.ser");
+              ObjectInputStream si = new ObjectInputStream(fi);
+              stu = (Student)si.readObject();
+              si.close();
+            } catch(Exception e) {
+              System.out.println(e);
+            }
+            System.out.println("ID: " + stu.id + "; name: " + stu.name + "; age: " + stu.age + "; dept: " + stu.department);
+          }
+        }
+
+    4.2 对象结构表
+      序列化只能保存对象再非静态成员变量，而不能保存在任何成员方法和静态成员变量，并且保存的只是变量的值，对于变量的任何修饰符都不能保存，访问权限(public,protected,private) 对于数据域的序列化没有影响。
+      有一些对象类不具有可持久性，因为其数据的特性决定了它会经常变化，其状态只是瞬时的，这样的对象是无法保存其状态的，如Thread对象或流对象。对于这样的成员变量，必须用transient关键字标明，否则编译器会报错。任何同transient关键字标明的成员变量都不会被保存。
+      另外，序列化可能涉及将对象存放到磁盘上或在网络上发送数据，这时会产生安全问题。对于一些需要保密的数据，不应保存在永久介质中，更不应简单地不加处理地保存下来，为了保证安全，应在这些变量前加上transient关键字。
+      如果一个可持久化的对象中包含一个指向不可持久化元素的引用，则整个持久化操作将失败。
+      当数据变量是一个对象时，该对象的数据成员也可以被持久化。对象的数据节后或结构树，包括其子对象树在内，构成了这个对象的结构表。
+      如果一个对象结构表中包含了一个对不可持久化对象的引用，而这个引用已用关键字transient加以标记，则这个对象仍可被持久化。
+      例7.5 真个对象的序列化：
+        public class MyClass implements Serializable {
+          public transient Thread myThread;
+          private String customerID;
+          private int total;
+        }
+      本例中，由于myThread域有transient修饰，所以尽管它是不可序列化元素，但其整个对象仍可序列化。类似的，如果对象的成员数据不适合进行序列化，则可以使用关键字transient以防止数据被序列化。
+      例7.6 数据不被序列化：
+        public class MyClass implements Serializable {
+          public transient Thread myThread;
+          private transient String customerID;
+          private int total;
+        }
+      其中，尽管变量customerID是可序列化元素，但由于有transient修饰，所以，整个对象在序列化时不会对它进行序列化。
+
+第三节、基本字符流：
+  从JDK1.1开始，java.io包中加入了专门用于字符流处理的类，它们时以Reader和Writer为基础派生的一系列类。
+  同InputStream和OutputStream类一样，Reader和Writer也是抽象类，只提供了一系列用于字符流处理的接口。它们的方法于InputStream和OutputStream类类似，只不过其中的参数换成了字符或字符数组。
+  1.读者和写者：
+    Java通过读者和写者，实现了对不同平台之间数据流中的数据进行转换。同其他程序设计语言使用ASCII字符集不同，java使用Unicode字符集来表示字符串和字符。ASCII字符集以一个字节(8bit)表示一个字符，可以认为一个字符就是一个字节(byte)。
+    
+      
+
+
+
+
+
+
 
 
 
