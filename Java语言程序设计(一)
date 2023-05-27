@@ -1443,6 +1443,72 @@
   同InputStream和OutputStream类一样，Reader和Writer也是抽象类，只提供了一系列用于字符流处理的接口。它们的方法于InputStream和OutputStream类类似，只不过其中的参数换成了字符或字符数组。
   1.读者和写者：
     Java通过读者和写者，实现了对不同平台之间数据流中的数据进行转换。同其他程序设计语言使用ASCII字符集不同，java使用Unicode字符集来表示字符串和字符。ASCII字符集以一个字节(8bit)表示一个字符，可以认为一个字符就是一个字节(byte)。
+    但Java使用的Unicode时一种大字符集，用两个字节(16bit)来表示一个字符，这时字节与字符就不再相同。为实现与其他程序语言及不同平台的交互，Java提供一种新的数据流处理方案，称作读者(Reader)和写者(Writer)。
+    像数据流一样，在java.io包中有许多不同类对其进行支持，其中最重要的时InputStreamReader和OutputStreamWriter类。这两个类是字节流和读者、写者的接口，用来在字节流和字符流之间作为中介。
+    使用这两个类进行字符处理时，在构造方法中应指定一定的平台规范，以便把以字节方式表示的流转换为特定平台上的字符表示。
+    例如，构造方法如下所示：
+      InputStreamReader(InputStream in): 默认规范
+      InputStreamReader(InputStream in, String enc): 指定规范enc。
+      OutputStreamWriter(OutputStream out): 默认规范
+      OutputStreamWriter(OutputStream out, String enc): 指定规范enc。
+    借助于这种转换系统，Java能够充分利用本地平台字符设置的灵活性，同时又可通过内部使用Unicode保留平台无关性。
+    在构造一个InputStreamReader或OutputStreamWriter类时，Java还定义了16位Unicode和其他平台的特定表示方法之间的转换规则。由于目前大多使用单字节表示字符，在进行Java字符与其他平台转换时如果不进行特定声明，单纯构造一个读者或写者连接到数据流，则将字节码作为默认情况和Unicode进行转换。
+    如果读取的字符流不是来自本地的，比如来自网上某处与本地编码方式不同的计算机，那么在构造字符输入流时就不能简单地使用默认编码规范，而应该指定一种统一的编码规范。在英语国家中，字节编码采用ISO8859_1协议。IOS8859_1是Latin-1编码系统映射到ASCII标准，能够在不同平台之间正确转换字符。
+    此外，也可以利用已提供支持的编码形式列表中的一项来指定另一种字节编码方式。编码形式列表可以在native2ascii工具文件中找到。
+    有时需要从与本地字符编码方式不同的数据源中读取输入内容。例如，从网络上一台不同类型的计算机上读取数据，这时就需要用明确的字符编码方式来构造InputStreamReader，否则，程序会把读到的字符当作本地表达方法来进行转换，这样就可能会引起错误。
+    构造映射到ASCII码的标准的InputStreamReader的方法如下：
+      ir = new InputStreamReader(System.in, "8859_1");
+    读者提供的方法包括以下几种：
+      void close()
+      void mark(int readAheadLimit)
+      boolean markSupported()
+      int read()
+      int read(char[] cbuf)
+      int read(char[] cbuf, int off, int len)
+      boolean ready()
+      void reset()
+      long skip(long n)
+    写者提供的方法包括以下几种：
+      void close()
+      void flush()
+      void write(char[] cbuf)
+      void write(char[] cbuf, int off, int len)
+      void write(int c)
+      void write(String str)
+      void write(String str, int off, int len)
+    
+  2.缓冲区读者和缓冲区写者：
+    像其他I/O操作一样，如果格式转换以较大数据块为单位进行，那么会提高效率。为此，java.io中提供了缓冲流BufferedReader和BufferedWriter。其构造方法与BufferedInputStream和BufferedOutputStream类似。
+    另外，除了read()和write()方法外，还提供了整行字符的处理方法。
+      public String readLine(): BUfferedReader的方法，从输入流中读取一行字符，行结束标志为"\n"、"\r"或两者一起。
+      public void newLine(): BufferedWriter的方法，向输出流中写入一个行结束标志。
+    把BufferedReader或BufferedWriter正确连接到InputStreamReader或OutputStreamWriter的末尾是一个很好的方法。但是要在BuffferedWriter中使用flush()方法，以强制清空缓冲区中剩余内容，防止遗漏。
+    程序7.5 缓冲区示例：
+      import java.io.*;
+      class FileToUnicode {
+        public static void main(String args[]) {
+          tyr {
+            FileInputStream fis = new FileInputStream("FileToUnicode.java");
+            InputStreamReader dis = new InputStreamReader(fis);
+            BufferedReader reader = new BufferedReader(dis);
+            String s;
+            while((s = reader.readLine()) != null) {
+              System.out.println("read: "+ s);
+            }
+            dis.close();
+          } catch(IOException e) {
+            System.out.println(e);
+          }
+        }
+      }
+
+第四节、文件的处理：
+  Java提供了File类，用于处理与文件相关的操作。File对象可以用来生成与文件(及其所在的路径)或目录结构相关的对象。不同的系统可能会有不同的目录结构表示法。但使用File类可以达到与系统无关的目的，这里使用的是抽象的路径表达法。java.io.File类提供了获得文件基本信息及操作文件的一些方法。
+  1.File类
+    在对一个文件进行I/O操作之前，必须先获得有关这个文件的基本信息，例如，文件能不能被读取，能不能被写入，绝对路径是什么，文件长度是多少等。类java.io.File提供了获得文件基本信息及操作文件的一些工具。
+    
+
+
     
       
 
