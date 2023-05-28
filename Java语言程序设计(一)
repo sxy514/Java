@@ -1506,6 +1506,90 @@
   Java提供了File类，用于处理与文件相关的操作。File对象可以用来生成与文件(及其所在的路径)或目录结构相关的对象。不同的系统可能会有不同的目录结构表示法。但使用File类可以达到与系统无关的目的，这里使用的是抽象的路径表达法。java.io.File类提供了获得文件基本信息及操作文件的一些方法。
   1.File类
     在对一个文件进行I/O操作之前，必须先获得有关这个文件的基本信息，例如，文件能不能被读取，能不能被写入，绝对路径是什么，文件长度是多少等。类java.io.File提供了获得文件基本信息及操作文件的一些工具。
+    要创建一个新的File对象可以使用以下3种构造方法：
+      第一种方法为
+      File myFile;
+      myFile = new File("mymotd");
+      第二种方法为：
+      myFile = new File("/", "mymotd");
+      第三种方法为：
+      File myDir = new File("/");
+      myFile = new File(myDir, "mymotd");
+    根据文件对象的具体情况，选择使用何种构造方法啊。例如，当在应用程序中只用到一个文件时，那么使用第1种构造方法最为实用；但如果使用了同一目录下的几个文件，则使用第2种或第3种构造方法更为方便。
+    创建File类的对象后，可以应用其中的相关方法来获取文件的信息。
+    1.1 与文件名相关的方法：
+      String getName(): 获取文件名。
+      String getPath(): 获取文件路径。
+      String getAbsolutePath(): 获取文件的绝对路径。
+      String getParent(): 获取文件的父目录。
+      boolean renameTo(File dest): 重命名文件，成功则返回true，失败返回false。
+    1.2 文件测定方法：
+      boolean exists(): 文件对象是否存在。
+      boolean canWrite(): 文件对象是否可写。
+      boolean canRead(): 文件对象是否可读。
+      boolean isFile(): 文件对象是否为文件。
+      boolean isDirectory(): 文件对象是否为目录。
+      boolean isAbsolute(): 文件对象是否为绝对路径。
+    1.3 常用文件信息和方法：
+      long lastModified(): 获取文件最后修改时间。
+      long length(): 获取文件长度。
+      boolean delete(): 删除文件对象指向的文件，成功则返回true，失败则返回false。
+    以上方法的使用如下，File类方法使用示例：
+      import java.io.*;
+      class UseFile {
+        public static void main(String args[]) {
+          File f = new File("/export/home/d.java");
+          System.out.println("File Name: " + f.getName());
+          System.out.println("Path: " + f.getPath());
+          System.out.println("Abs Path: " + f.getAbsolutePath());
+          System.out.println("Parent: " + f.getParent());
+          System.out.println(f.exists() ? "exists" : "does not exist");
+          File newfile = new File("newfile");
+          f.renameTo(newfile);
+          System.out.println("\t Rename the file to : " + newfile.getName());
+          newfile.delete();
+          }
+      }
+    程序中构造了File类的对象，运用各个方法得到文件的各种属性，然后将这个文件改名，最后删除。但是要注意，对于文件名以外的其他属性，在File类中并没有提供对其进行修改的方法。
+    1.4 目录工具：
+      boolean mkdir(): 创建新目录。
+      boolean mkdirs(): 创建新目录。
+      String[] list(): 列出符合模式的文件名。
+    File类同样可以用来描述一个目录，对其进行操作也与文件相同，只是不能改变目录名，也不能进行删除，但是可以按模式匹配要求列出目录中所有的文件或子目录。如果目录不存在，也可用mkdir()和mkdirs()来生成该目录。两者的区别在于用mkdirs()可以一次生成多个层次的子目录。
+
+  2.随机访问文件：
+    程序在读写文件时常常不仅要能够从头读到尾，还要能够像访问数据库那样，到一个位置读一条记录，到另一个位置读另一条记录，然后再读另一条。每次都在文件的不同位置进行读取。Java语言提供了RandomAccessFile类来处理这种类型的输入/输出。
+    创建一个随机访问文件有以下两种方法供选择。
+      1. 使用文件名：
+        myRAFile = new RandomAccessFile(String name , String mode);
+      2. 使用文件对象：
+        myRAFile = new RandomAccessFile(File file, String mode);
+    参数mode决定是以只读方式("r")还是以读写方法("rw")访问文件。例如，可以打开一个数据库进行更新：
+      RandomAccessFile myRAFile;
+      myRAFile = new RandomAccessFile("db/stock.dbf", "rw");
+    对象RandomAccessFile读写信息的方法同数据输入/输出对象的方法相同，它可以访问DatainputStream和DataOutputStream类中的所有read()和write()方法。
+    Java语言提供了移动文件读写指针的几个方法。
+      long getFilePointer(): 返回文件指针的当前位置。
+      void seek(long pos): 将文件指针置于指定的绝对位置。位置值以从文件开始处的字节偏移量pos来计算，pos为0的代表文件的开始。
+      long length(): 返回文件的长度。位置值为length()，代表文件的结尾。
+    为文件添加信息时可以利用随机访问文件来完成文件输出的添加模式。例如：
+      myRAFile = new RandomAccessFile("java.log","rw");
+      myRAFile.seek(myRAFile.length());
+    现在文件的读写指针已经移至文件的末尾，如果在这之后使用任何流的write()方法，那么所写入的信息都将添加在原文件之后。
+
+第七章小结：
+  本章介绍了数据流的基本概念和主要的操作方法，通过这些方法可以实现基本的输入/输出功能。要掌握两种基本的数据流，包括文件数据流、过滤器数据流、缓冲数据流等在内的字节数据流，以及读者和写者在内的字符数据流。
+  本章还介绍了对文件进行操作的File类和RandomAccessFile随机存取文件类。要掌握对文件进行操作的基本方法。
+
+
+第八章、图形界面设计
+  
+
+    
+
+
+
+     
     
 
 
