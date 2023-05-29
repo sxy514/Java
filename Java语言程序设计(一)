@@ -1251,7 +1251,6 @@
       import java.io.*;
       public class Test{
         public static void main(String[] args) {
-
           try {  
             FileOutputStream out = new FileOutputStream("myFile.dat");
             out.write('A');
@@ -1583,59 +1582,66 @@
 
 
 第八章、图形界面设计
+第一节、AWT与Swing
+  图形用户界面(Graphical User Interface,GUI)是大多数程序不可缺少的部分，Java的图形用户界面由各种组件构成，在java.awt包和javax.swing包中定义了多种用于创建图形用户界面的组件类。设计图形用户界面时一般有3个步骤，分别是选取组件、设计布局及响应事件。
+  早期的JDK版本中提供了Java抽象窗口工具集(Abstract Window Toolkit,AWT)，为程序员创建图形用户界面提供支持。后来的JDK版本中，又提供了功能更强的Swing。AWT组件定义在java.awt包中，Swing组件定义在javax.swing包中。
+  AWT和Swing包含了部分对应的组件，例如，标签和按钮，在java.awt包中分别用lable和Button表示，而在javax.swing包中，则分别用JLable和JButton表示，多数Swing组件以字母"J"开头。
+  Swing组件与AWT组件最大的不同是Swing组件在实现时不包含任何本地代码，因此Swing组件可以不受硬件平台的限制，而具有更多的功能。基于AWT的界面可能会因运行平台的不同略有差异，而基于Swing的界面在任何平台上的显示效果都是一致的。
+  不包含本地代码的Swing组件被称为"轻量级"组件，而包含本地代码的AWT组件被称为"重量级"组件。当"重量级"组件与"轻量级"组件一同使用时，如果组件区域有重叠，那么"重量级"组件将覆盖"轻量级"组件。在Java2平台上推荐使用Swing组件。
+  Swing组件比AWT组件拥有更多的功能，例如，Swing中的按钮和标签不仅可以显示文本信息，还可以显示图标，或同时显示文本和图标；大多数Swing组件都可以添加和修改边框；Swing组件的形状是任意的，而不仅局限于长方形。
+  Java的图形用户界面由各种组件构成，组件时构成图形用户界面的基本元素。例如，按钮(JButton)、文本输入框(JTextField)、标签(JLable)等都是组件。
+  框架(Frame)、面板(Panel)等组件称为容器(Container)，它们是特殊的组件，可以包含组件，各种组件(包括容器)可以通过add()方法添加到容器中。Java语言为每种组件都定义了类，通过这些类或是它们的子类可以创建组件对象。通过相关方法可以对界面进行控制及响应。
+
+第二节、容器
+  组件可以分为容器组件和非容器组件。所谓容器组件是指可以包含其它组件的组件，又分为顶层容器和一般用途容器。而非容器组件则必须要包含在容器中。
+  显示在屏幕上的所有组件都必须包含在某个容器中，有些容器可以嵌套，在这个嵌套层次的最外层，必须是一个顶层容器。此外，还有一些容器时不能当作顶层容器的，例如，Jpanel和JscrollPane。Java为所有容器类定义了一个父类Container，容器的共有操作都在定义Container类中。
+  1.顶层容器：
+    Swing中提供了4种顶层容器，分别为JFrame、JApplet、JDialog和JWindow。JFrame是一个带有标题行和控制按钮(最小化、恢复/最大化、关闭)的独立窗口，有时称为框架，创建应用程序时需要使用JFrame。创建小应用程序时使用JApplet，它被包含在浏览器窗口中。创建对话框时使用JDialog。JWindow是一个不带有标题行和控制按钮的窗口，通常很少用。
+    JFrame类常用的构造方法有以下几种:
+      JFrame(): 构造一个初始时不可见、无标题的新框架窗体。
+      JFrame(String title): 构造一个初始时不可见、具有指定标题的新框架窗体。
+    JFrame类中定义了一些相关方法，另外也从祖先类中继承了一些方法。常用的方法有以下几种:
+      void setBounds(int x,int y,int width,int height): 移动并调整框架大小。左上角位置的横纵坐标分别由x和y指定，框架的宽高分别由width和height指定。
+      void setSize(int width,int height): 设置框架大小。框架的宽高分别由width和height指定。
+      void setBackgroud(Color bg): 设置框架的背景颜色。
+      void setVisible(boolean b): 使框架可见或不可见。
+      void pack(): 调整框架的大小，以合适其子组件的首选大小和布局。
+      void setTitle(String): 设置框架的标题为字符串title。
+      Container getContentPane(): 返回此框架窗体的内容窗格对象。
+      void setLayout(LayoutManager manager): 设置布局管理器。
+    程序8.1是一个使用JFrame创建应用程序的例子，运行该程序，将在屏幕上显示出一个窗口，窗口中有一个按钮：
+      import javax.swing.*;
+      import java.awt.*;
+      public class SimpleFrameTest
+      {
+        public static void main(String[] args)
+        {
+          JFrame frame = new JFrame("测试窗口");     // 创建一个JFrame对象
+          JButton button = new JButton("测试按钮");  // 创建按钮
+          frame.getContentPane().add(button,BorderLayout.CENTER); // 将按钮添加到JFrame中
+          frame.pack();                              // 调整大小
+          frame.setVisible(true);                    // 设置窗口可见
+          frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // 退出时关闭窗口
+        }
+      }
+    创建窗口用到的JFrame和JButton类定义在javax.swing包中，而BorderLayout定义在java.awt包中，程序的最开始要引用这两个包。主程序中首先创建了一个JFrame和一个JButton。JFrame是一个顶层级窗口，构造方法的参数指明了窗口的标题。
+    JButton构造方法的参数指明了按钮上要显示的文字。JFrame可以改变窗口大小。在刚刚创建时，它的大小为0，并且不可见，需要使用frame.pack();语句调整窗口的大小，且使用frame.setVisible(true);语句来显示JFrame。pack()之前的语句，是将JButton放到JFrame的中央。
   
+  2.内容窗格：
+    4个顶层容器中的每一个都有一个内容窗格。除菜单之外，顶层容器中的组件都放在这个内容窗格中。有两种方法可以将组件放入内容窗格中，一种是通过顶层容器的getContentPane()方法获得其默认的内容窗格。
+    getContentPane()方法的返回类型为java.awt.Container，它仍然是一个容器。然后将组件添加到内容窗格中，例如：
+      Container contentPane =  frame.getContentPane();
+      contentPane.add(button, BorderLayout.CENTER);
+    上面两条语句也可合并为一条：
+      frame.getContentPane().add(button, BorderLayout.CENTER);
+    另一种方法是创建一个新的内容窗格，以取代顶层容器默认的内容窗格。通常的做法是创建一个JPanel的实例，它是java.awt.Container的子类。然后将组件添加到JPanel实例中，再通过顶层容器的setContentPane()方法将JPanel实例设置为新的内容窗格，例如：
+      JPanel contentPane = new JPanel();              // 创建JPanel对象
+      contentPane.setLayout(new BorderLayout());      // 创建布局管理器
+      contentPane.add(button, BorderLayout.CENTER);   // 添加组件
+      frame.setContentPane(contentPane);              // 添加内容窗格
+    顶层容器默认内容窗格的布局管理器是BorderLayout，而JPanel默认的布局管理器是FlowLayout，因此需要为JPanel实例设置一个BorderLayout布局管理器。
 
     
-
-
-
-     
-    
-
-
-    
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-     
-  
-
-
-     
-     
-
-     
-    
-    
-
-
-
-
-
-  
-
-
-
-
-    
-
-
-
-
 
 
 
