@@ -1640,6 +1640,31 @@
       contentPane.add(button, BorderLayout.CENTER);   // 添加组件
       frame.setContentPane(contentPane);              // 添加内容窗格
     顶层容器默认内容窗格的布局管理器是BorderLayout，而JPanel默认的布局管理器是FlowLayout，因此需要为JPanel实例设置一个BorderLayout布局管理器。
+    程序8.2 改写程序8.1中的JFrame示例：
+      import java.awt.*;
+      import javax.swing.*;
+      public class JFrameDemo2 {
+        public static void main(String args[]) {
+          JFrame frame = new JFrame("JFrameDemo2");       // 创建一个JFrame的实例
+          JButton button = new JButton("press me");       // 创建一个JButton的实例
+          JPanel contentPane = new JPanel();              // 创建一个JPanel的实例
+          contentPane.setLayout(new BorderLayout());      // 为JPanel设置BorderLayout布局管理器
+          contentPane.add(button, BorderLayout.CENTER);   // 将JButton放到JPanel的中央
+          frame.setContentPane(contentPane);              // 将JFrame设置新的内容窗口
+          frame.pack();                                   // 将JFrame设置为适当的大小
+          frame.setVisible(true);                         // 显示JFrame
+          frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // 退出时关闭窗口
+        }
+      }
+    向顶层容器的内容中添加组件时，可以直接调用顶层容器的add()方法，这与掉哟个内容窗格的add()方法是等价的。
+
+  3.面板：
+    普通面板(JPanel)和滚动面板(JScrollPane)都是用途广泛的容器。与顶层容器不同的是，面板不能独立存在，必须被添加到其他容器内部。面板可以嵌套，由此可以设计出复杂的图形用户界面。
+    当容器中组件过多而不能在显示区域内全部显示时，可以让容器带滚动条，从而显示出全部的组件，使用滚动面板可以实现这个功能。
+      JPanel(): 创建具有FlowLayout布局的新面板。
+      JPanel(LayoutManager layout): 创建具有指定布局管理器的新面板。
+    使用public Component add(Component comp)方法可以将指定组件追加到面板中。
+    
 
     
 
