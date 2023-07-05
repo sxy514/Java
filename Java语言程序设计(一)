@@ -1585,11 +1585,11 @@
 第一节、AWT与Swing
   图形用户界面(Graphical User Interface,GUI)是大多数程序不可缺少的部分，Java的图形用户界面由各种组件构成，在java.awt包和javax.swing包中定义了多种用于创建图形用户界面的组件类。设计图形用户界面时一般有3个步骤，分别是选取组件、设计布局及响应事件。
   早期的JDK版本中提供了Java抽象窗口工具集(Abstract Window Toolkit,AWT)，为程序员创建图形用户界面提供支持。后来的JDK版本中，又提供了功能更强的Swing。AWT组件定义在java.awt包中，Swing组件定义在javax.swing包中。
-  AWT和Swing包含了部分对应的组件，例如，标签和按钮，在java.awt包中分别用lable和Button表示，而在javax.swing包中，则分别用JLable和JButton表示，多数Swing组件以字母"J"开头。
+  AWT和Swing包含了部分对应的组件，例如，标签和按钮，在java.awt包中分别用lable和Button表示，而在javax.swing包中，则分别用JLabel和JButton表示，多数Swing组件以字母"J"开头。
   Swing组件与AWT组件最大的不同是Swing组件在实现时不包含任何本地代码，因此Swing组件可以不受硬件平台的限制，而具有更多的功能。基于AWT的界面可能会因运行平台的不同略有差异，而基于Swing的界面在任何平台上的显示效果都是一致的。
   不包含本地代码的Swing组件被称为"轻量级"组件，而包含本地代码的AWT组件被称为"重量级"组件。当"重量级"组件与"轻量级"组件一同使用时，如果组件区域有重叠，那么"重量级"组件将覆盖"轻量级"组件。在Java2平台上推荐使用Swing组件。
   Swing组件比AWT组件拥有更多的功能，例如，Swing中的按钮和标签不仅可以显示文本信息，还可以显示图标，或同时显示文本和图标；大多数Swing组件都可以添加和修改边框；Swing组件的形状是任意的，而不仅局限于长方形。
-  Java的图形用户界面由各种组件构成，组件时构成图形用户界面的基本元素。例如，按钮(JButton)、文本输入框(JTextField)、标签(JLable)等都是组件。
+  Java的图形用户界面由各种组件构成，组件时构成图形用户界面的基本元素。例如，按钮(JButton)、文本输入框(JTextField)、标签(JLabel)等都是组件。
   框架(Frame)、面板(Panel)等组件称为容器(Container)，它们是特殊的组件，可以包含组件，各种组件(包括容器)可以通过add()方法添加到容器中。Java语言为每种组件都定义了类，通过这些类或是它们的子类可以创建组件对象。通过相关方法可以对界面进行控制及响应。
 
 第二节、容器
@@ -1664,9 +1664,81 @@
       JPanel(): 创建具有FlowLayout布局的新面板。
       JPanel(LayoutManager layout): 创建具有指定布局管理器的新面板。
     使用public Component add(Component comp)方法可以将指定组件追加到面板中。
-    
+    程序8.3创建一个黄色普通面板，通过add()方法在面板中添加一个按钮，然后将该面板添加到JFrame的一个实例中，JFrame实例的背景色被设置为蓝绿色。
+    import java.awt.*;
+    import javax.swing.*;
+    public class FrameWithPanel {
+      public static void main(String args[]) {
+        JFrame frame = new JFrame("Frame with Panel");  // 带标题的JFrame实例
+        Container contentPane = frame.getContentPane(); // 获取内容窗格
+        contentPane.setBackgroud(Color.CYAN);           // 将JFrame实例的背景色设置为蓝绿色
+        JPanel panel = new JPanel();                    // 创建一个JPanel的实例
+        panel.setBackgroud(Color.yellow);               // 将JPanel实例的背景色设置为黄色
+        JButton button = new JButton("Press me");
+        panel.add(button);                              // 将JButton实例添加到JPanel中
+        contentPane.add(panel,BorderLayout.SOUTH);      // 将JPanel实例添加到JFrame的南侧
+        frame.setSize(300,200); 
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // 退出时关闭窗口
+      }
+    }
+    JScrollPane是带有滚动条的面板，它是Container类的子类。但是只能添加一个组件。所以当有多个组件需要添加时，一般是先将多个组件添加到JPanel中，然后再将这个JPanel添加到JScrollPane中。
+    JScrollPane类中常用的构造方法有以下几种。
+      ①JScrollPane(): 创建一个空的JScrollPane，需要时水平和垂直滚动条都可显示。
+      ②JScrollPane(Component view): 创建一个显示指定组件内容的JScrollPane，只要组件的内容超过视图大小，就会显示水平和垂直滚动条。
+    JScrollPane类中床用的方法有以下几种。
+      ①void setHorizontalScrollBarPolicy(int policy): 确定水平滚动条合适显示在滚动窗格上。
+        参数policy的可选值为下列三者之一。
+        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED: 需要时可见。
+        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER: 总是不可见。
+        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS: 总是可见的。
+      ②void setVerticalScrollBarPolicy(int policy): 确定垂直滚动条何时显示在滚动窗格上。
+        参数policy的可选值为下列三者之一:
+        ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED: 需要时可见。
+        ScrollPaneConstants.VERTICAL_SCROLLBAR_NERVER: 总是不可见。
+        ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS: 总是可见的。
+    AWT中还有一个滚动条组件，提供一个允许用户在一定范围的值中进行选择的便捷方式。滚动条的构造方法有以下几种。
+      ①Scrollbar(): 构造一个新的垂直滚动条。
+      ②Scrollbar(int orientation): 构造一个具有指定方向的新滚动条。orientation指示滚动条的方向，其值是Scrollbar.HORIZONTAL或者Scrollbar.VERTICAL，分别指示滚动条是水平还是垂直滚动条。
+      ③Scrollbar(int orientation, int value, int visible, int minimum, int maximum): 构造一个新的滚动条，它具有指定的方向，初始值，可视量，最小值和最大值。orientation的值如前所述，value是滚动条的初始值，visible是滚动条的可视量，通常由滑动块的大小表示，minimum是滚动条的最小值，maximum是滚动条的最大值。
 
-    
+第三节、标签
+  1.标签：
+  标签(JLabel)对象是最简单的Swing组件，通常用于显示提示性的文本信息或图标，不可被编辑，其构造方法有以下6种形式：
+    ①JLabel(): 创建一个既不显示文本信息又不显示图标的空标签。
+    ②JLabel(Icon image): 创建一个显示图标的标签。
+    ③JLabel(String text): 创建一个显示文本信息的标签。
+    ④JLabel(Icon image, int horizontalAlignment): 创建一个显示图标的标签，水平对齐方式由int型参数horizontalAlignment指定。
+    ⑤JLabel(String text, int horizontalAlignment): 创建一个显示文本信息的标签，水平对齐方式由int型参数horizontalAlignment指定。
+    ⑥JLabel(String text, Icon image, int horizontalAlignment): 创建一个同时显示文本信息和图标的标签，水平对齐方式由int型参数horizontalAlignment指定。
+  构造方法中，表示水平对齐方式的int型参数horizontalAlignment的取值可以为JLabel.LEFT、JLabel.RIGHT和JLabel.CENTER常量，分别表示左对齐、右对齐和居中对齐。
+  例如：
+    JLabel label = new JLabel("Hello",JLabel.RIGHT);
+  该命令构造一个以右对齐方式显示的标签。
+  默认情况下，标签内容在垂直方向上居中显示，只有文本信息的标签在水平方向上左对齐，只有图标的标签在水平方向上居中显示。
+  通过setHorizontalAlignment(int alignment)方法可以设置标签内容的水平对齐方式，通过setVerticalAlignment(int alignment)方法可以设置标签内容的垂直对齐方式。
+  例如，下面命令将显示内容设置为水平居中、底部对齐。
+    label.setHorizontalAlignment(JLabel.CENTER);
+    label.setVerticalAlignment(JLabel.BOTTOM);
+  程序中可以使用setText(String text)方法修改显示在标签上的文本信息，也可以使用setIcon(Icon icon)方法修改标签上的图标。
+
+  2.按钮：
+  按钮(JButton)是Java图形用户界面的基本组件之一，经常用到的按钮有4种形式：JButton、JToggleButton、JCheekBox和JRadioButton，它们均是AbstractButton的子类或间接子类。各种按钮上都可以设置文本，设置图标，注册事件侦听程序。
+  在AbstractzButton中定义了按钮所共有的一些方法，例如addActionListener()、setEnabled()、setText()和setIcon()等。
+  JButton是最简单的按钮，常用的构造方法有以下几种。
+    ①JButton(): 创建一个既没有显示文本也没有显示图标的按钮。
+    ②JButton(Icon icon): 创建一个没有显示文本但是有图标的按钮。
+    ③JButton(String text): 创建一个有显示文本但是没有图标的按钮。
+    ④JButton(String text, Icon icon): 创建一个既有显示文本又有图标的按钮。
+  例如下面的这条命令，构造一个显示文本为"Sample"、带有钻石形状大小图标的按钮。
+    JButton b = new JButton("sample", new ImageIcon("icon.gif"));
+  当用户用鼠标单击按钮时，事件处理系统将向按钮发送一个ActionEvent事件类对象，如果程序需要对此做出反应，则需要使用addActionListener()为按钮注册事件侦听程序并实现ActionListener接口。
+  JButton类的常用方法有以下几种。
+    ①public void setMnemonic(int mnemonic): 设置当前按钮的键盘助记符。
+    ②public void setText(String text): 设置按钮的文本。
+    ③public String getText(): 返回按钮的文本。
+    ④public void setToolTipText(String text): 设置要显示的提示文本。
+    ⑤public void addActionListener(ActionListener I);
 
 
 
