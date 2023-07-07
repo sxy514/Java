@@ -1704,41 +1704,82 @@
 
 第三节、标签
   1.标签：
-  标签(JLabel)对象是最简单的Swing组件，通常用于显示提示性的文本信息或图标，不可被编辑，其构造方法有以下6种形式：
-    ①JLabel(): 创建一个既不显示文本信息又不显示图标的空标签。
-    ②JLabel(Icon image): 创建一个显示图标的标签。
-    ③JLabel(String text): 创建一个显示文本信息的标签。
-    ④JLabel(Icon image, int horizontalAlignment): 创建一个显示图标的标签，水平对齐方式由int型参数horizontalAlignment指定。
-    ⑤JLabel(String text, int horizontalAlignment): 创建一个显示文本信息的标签，水平对齐方式由int型参数horizontalAlignment指定。
-    ⑥JLabel(String text, Icon image, int horizontalAlignment): 创建一个同时显示文本信息和图标的标签，水平对齐方式由int型参数horizontalAlignment指定。
-  构造方法中，表示水平对齐方式的int型参数horizontalAlignment的取值可以为JLabel.LEFT、JLabel.RIGHT和JLabel.CENTER常量，分别表示左对齐、右对齐和居中对齐。
-  例如：
-    JLabel label = new JLabel("Hello",JLabel.RIGHT);
-  该命令构造一个以右对齐方式显示的标签。
-  默认情况下，标签内容在垂直方向上居中显示，只有文本信息的标签在水平方向上左对齐，只有图标的标签在水平方向上居中显示。
-  通过setHorizontalAlignment(int alignment)方法可以设置标签内容的水平对齐方式，通过setVerticalAlignment(int alignment)方法可以设置标签内容的垂直对齐方式。
-  例如，下面命令将显示内容设置为水平居中、底部对齐。
-    label.setHorizontalAlignment(JLabel.CENTER);
-    label.setVerticalAlignment(JLabel.BOTTOM);
-  程序中可以使用setText(String text)方法修改显示在标签上的文本信息，也可以使用setIcon(Icon icon)方法修改标签上的图标。
+    标签(JLabel)对象是最简单的Swing组件，通常用于显示提示性的文本信息或图标，不可被编辑，其构造方法有以下6种形式：
+      ①JLabel(): 创建一个既不显示文本信息又不显示图标的空标签。
+      ②JLabel(Icon image): 创建一个显示图标的标签。
+      ③JLabel(String text): 创建一个显示文本信息的标签。
+      ④JLabel(Icon image, int horizontalAlignment): 创建一个显示图标的标签，水平对齐方式由int型参数horizontalAlignment指定。
+      ⑤JLabel(String text, int horizontalAlignment): 创建一个显示文本信息的标签，水平对齐方式由int型参数horizontalAlignment指定。
+      ⑥JLabel(String text, Icon image, int horizontalAlignment): 创建一个同时显示文本信息和图标的标签，水平对齐方式由int型参数horizontalAlignment指定。
+    构造方法中，表示水平对齐方式的int型参数horizontalAlignment的取值可以为JLabel.LEFT、JLabel.RIGHT和JLabel.CENTER常量，分别表示左对齐、右对齐和居中对齐。
+    例如：
+      JLabel label = new JLabel("Hello",JLabel.RIGHT);
+    该命令构造一个以右对齐方式显示的标签。
+    默认情况下，标签内容在垂直方向上居中显示，只有文本信息的标签在水平方向上左对齐，只有图标的标签在水平方向上居中显示。
+    通过setHorizontalAlignment(int alignment)方法可以设置标签内容的水平对齐方式，通过setVerticalAlignment(int alignment)方法可以设置标签内容的垂直对齐方式。
+    例如，下面命令将显示内容设置为水平居中、底部对齐。
+      label.setHorizontalAlignment(JLabel.CENTER);
+      label.setVerticalAlignment(JLabel.BOTTOM);
+    程序中可以使用setText(String text)方法修改显示在标签上的文本信息，也可以使用setIcon(Icon icon)方法修改标签上的图标。
 
   2.按钮：
-  按钮(JButton)是Java图形用户界面的基本组件之一，经常用到的按钮有4种形式：JButton、JToggleButton、JCheekBox和JRadioButton，它们均是AbstractButton的子类或间接子类。各种按钮上都可以设置文本，设置图标，注册事件侦听程序。
-  在AbstractzButton中定义了按钮所共有的一些方法，例如addActionListener()、setEnabled()、setText()和setIcon()等。
-  JButton是最简单的按钮，常用的构造方法有以下几种。
-    ①JButton(): 创建一个既没有显示文本也没有显示图标的按钮。
-    ②JButton(Icon icon): 创建一个没有显示文本但是有图标的按钮。
-    ③JButton(String text): 创建一个有显示文本但是没有图标的按钮。
-    ④JButton(String text, Icon icon): 创建一个既有显示文本又有图标的按钮。
-  例如下面的这条命令，构造一个显示文本为"Sample"、带有钻石形状大小图标的按钮。
-    JButton b = new JButton("sample", new ImageIcon("icon.gif"));
-  当用户用鼠标单击按钮时，事件处理系统将向按钮发送一个ActionEvent事件类对象，如果程序需要对此做出反应，则需要使用addActionListener()为按钮注册事件侦听程序并实现ActionListener接口。
-  JButton类的常用方法有以下几种。
-    ①public void setMnemonic(int mnemonic): 设置当前按钮的键盘助记符。
-    ②public void setText(String text): 设置按钮的文本。
-    ③public String getText(): 返回按钮的文本。
-    ④public void setToolTipText(String text): 设置要显示的提示文本。
-    ⑤public void addActionListener(ActionListener I);
+    按钮(JButton)是Java图形用户界面的基本组件之一，经常用到的按钮有4种形式：JButton、JToggleButton、JCheekBox和JRadioButton，它们均是AbstractButton的子类或间接子类。各种按钮上都可以设置文本，设置图标，注册事件侦听程序。
+    在AbstractzButton中定义了按钮所共有的一些方法，例如addActionListener()、setEnabled()、setText()和setIcon()等。
+    JButton是最简单的按钮，常用的构造方法有以下几种。
+      ①JButton(): 创建一个既没有显示文本也没有显示图标的按钮。
+      ②JButton(Icon icon): 创建一个没有显示文本但是有图标的按钮。
+      ③JButton(String text): 创建一个有显示文本但是没有图标的按钮。
+      ④JButton(String text, Icon icon): 创建一个既有显示文本又有图标的按钮。
+    例如下面的这条命令，构造一个显示文本为"Sample"、带有钻石形状大小图标的按钮。
+      JButton b = new JButton("sample", new ImageIcon("icon.gif"));
+    当用户用鼠标单击按钮时，事件处理系统将向按钮发送一个ActionEvent事件类对象，如果程序需要对此做出反应，则需要使用addActionListener()为按钮注册事件侦听程序并实现ActionListener接口。
+    JButton类的常用方法有以下几种。
+      ①public void setMnemonic(int mnemonic): 设置当前按钮的键盘助记符。
+      ②public void setText(String text): 设置按钮的文本。
+      ③public String getText(): 返回按钮的文本。
+      ④public void setToolTipText(String text): 设置要显示的提示文本。
+      ⑤public void addActionListener(ActionListener I);
+    程序示例请查看程序8_4.java
+    程序运行中，可通过setText()方法动态地改变按钮上显示的文本，通过setEnabled()方法改变按钮的状态。
+
+  3.切换按钮、复选按钮及单选按钮
+    除了普通按钮JButton外，还有切换按钮(JToggleButton)、复选按钮(JCheckBox)和单选按钮(JRadioButton)。
+    JToggleButton是具有两种状态的按钮，即选中状态和未选中状态。
+    JToggleButton的构造方法主要有以下几种格式。
+      JToggleButton(): 创建一个既没有显示文本又没有显示图标的切换按钮。
+      JToggleButton(Icon icon): 创建一个没有显示文本但有显示图标的切换按钮。
+      JToggleButton(Icon icon, boolean selected): 创建一个没有显示文本但有图标和指定初始状态的切换按钮。
+      JToggleButton(String text): 创建一个有显示文本但没有图标的切换按钮。
+      JToggleButton(String text, boolean selected): 创建一个有显示文本和指定初始状态但没有图标的切换按钮。
+      JToggleButton(String text, Icon icon): 创建一个既没有显示文本又没有显示图标的切换按钮。
+      JToggleButton(String text, Icon icon, boolean selected); 创建一个既有显示文本又有图标和指定初始状态的切换按钮。
+    构造方法中如果没有指定按钮的初始状态，则默认处于未选中状态。
+    JCheckBox和JRadioButton都是JToggleButton的子类，构造方法的格式与JToggleButton相同，它们也都具有选中和未选中两种状态。
+    在JToggleButton类中定义了一个isSelected()方法，通过该方法可以获知按钮的当前状态：当返回值为true时表示处于选中状态，而返回false则表示处于未选中状态。
+    程序示例请查看程序8_5.java
+
+第四节、布局管理器
+  容器中包含了组件。组件的布局，包括各组件的位置和大小，通常由布局管理器负责安排。每个容器，例如JPanel或者顶层容器的内容窗格，都有一个默认的布局管理器，可以通过容器的setLayout()方法改变容器的布局管理器。
+  Java平台提供了多种布局管理器，本节将介绍较常用的几个。
+  1.FlowLayout布局管理器
+    FlowLayout定义在Java.awt包中，这个布局管理器对容器中组件进行布局的方式是将组件逐个地放置在容器中的一行上，一行放满后就另起一个新行。它有3种构造方法。
+      ①FlowLayout(): 创建一个默认的FlowLayout布局管理器，居中对齐，默认的水平和垂直间距是5个像素。
+      ②FlowLayout(int align): 创建一个新的FlowLayout布局管理器，对齐方式是指定的，默认的水平和垂直间距是5个像素。
+      ③FlowLayout(int align, int hgap, int vgap): 创建一个新的FlowLayout布局管理器，具有指定的对齐方式以及指定的水平和垂直间距。
+    在默认情况下，FlowLayout将组件居中放置在容器的某一行上。如果不想采用这种居中对齐的方式，FlowLayout的构造方法中提供了一个对齐方式的可选项align，可以将组件的对齐方式设定为左对齐或者右对齐。
+    align的可取值有FlowLayout.LEFT、FlowLayout.RIGHT和FlowLayout.CENTER三种形式，分别对应组件的左对齐，右对齐和居中对齐三种方式，例如：new FlowLayout(FlowLayout.LEFT); 创建了一个使用左对齐方式对齐的FlowLayout实例。
+    此外，FlowLayout的构造方法中还有一对可选项hgap和vgap，可用来设定组件的水平间距和垂直间距。与其他布局管理器不同的是，FlowLayout布局管理器并不强行设定组件的大小，而是允许组件拥有它们自己所希望的尺寸。每个组件都有一个getPreferredSize()方法，容器的布局管理器会调用这一方法取得每个组件希望的大小。
+    下面是几个使用setLayout()方法实现FlowLayout的例子。
+      setLayout(new FlowLayout(FlowLayout.RIGHT, 20, 40));
+      setLayout(new FlowLayout(FlowLayout.LEFT));
+      setLayout(new FlowLayout());
+    程序示例请查看程序8_6.java
+    
+
+
+
+
+
 
 
 
