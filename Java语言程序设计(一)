@@ -1758,6 +1758,28 @@
     JCheckBox和JRadioButton都是JToggleButton的子类，构造方法的格式与JToggleButton相同，它们也都具有选中和未选中两种状态。
     在JToggleButton类中定义了一个isSelected()方法，通过该方法可以获知按钮的当前状态：当返回值为true时表示处于选中状态，而返回false则表示处于未选中状态。
     程序示例请查看程序8_5.java
+    程序8_5中涉及多方面的知识，做以下说明：
+      ①JToggleButton、JCheckBox和JRadioButton等具有两种状态的按钮不仅可以注册ActionEvent事件侦听程序，还可以注册ItemEvent事件侦听程序，在ItemListener接口中声明了如下方法：
+        public void itemStateChanged(ItemEvent e);
+        当按钮状态发生改变时，会调用该方法。
+      ②多个组件可以使用共同的事件处理程序，例如，程序中6个JCheckBox对象都注册了相同的ItemEvent事件处理程序，6个JRadioButton对象都注册了相同的ActionEvent事件处理程序，在ActionEvent、ItemEvent等事件类对象中都提供了getSource()方法，可以获取事件源，该方法的返回类型是Object。
+        public Object getSource();
+        需要进行类型转换，例如，下面命令将Object类型转换为JRadioButton类型。
+        JRadioButton rb = (JRadioButton)e.getSource();
+        ItemEvent中还提供了一个getItem()方法，作用与getSource()方法相同。
+      ③在事件处理程序中，通过isSelected()方法获取按钮的当前状态，例如：
+        ta.append("\n JCheckBox Button 1" + cb1.isSelected());
+      ④按钮可以添加到按钮中组中，这时首先要创建一个按钮组对象，然后调用按钮组的add()方法将按钮添加到按钮组。当多个按钮被添加到同一个按钮组后，如果用户选中一个按钮，那么其他按钮就会变成未选中状态，也就是说，只能有一个按钮处于被选中状态。
+      ⑤JCheckBox Group和JRadioButton Group分别注册了不同的事件监听程序，在JCheckBox Group中，如果先选中Button5，然后选中Button6，那么将会出现下列提示：
+        JCheckBox Button 5 true  
+        JCheckBox Button 5 false 
+        JCheckBox Button 6 true  
+        在JRadioButton Group中，同样先选中Button5，然后选中Button6，那么出现的提示是：
+        You selected Radio Button 5 true
+        You selected Radio Button 6 true
+        因此，对按钮组中的组件，使用ItemListener与使用ActionListener是有差别的。
+      ⑥JCheckBox加入按钮组之后只能单选，JRadioButton如果不加入按钮组也可以多选，但是通常用JCheckBox表示那些可多选的选择项（不加入按钮组），而用JRadioButton表示只能单选的选择项(需要加入按钮组)，因此JCheckBox称为复选按钮，而JRadioButton称为单选按钮。
+
 
 第四节、布局管理器
   容器中包含了组件。组件的布局，包括各组件的位置和大小，通常由布局管理器负责安排。每个容器，例如JPanel或者顶层容器的内容窗格，都有一个默认的布局管理器，可以通过容器的setLayout()方法改变容器的布局管理器。
