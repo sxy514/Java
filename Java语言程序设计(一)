@@ -1838,14 +1838,40 @@
   4.CardLayout布局管理器
     CardLayout也是定义在java.awt包中的布局管理器，这是一种卡片式的布管理器，它将容器中的组件处理为一系列卡片，每一时刻只显示出其中一张，而容器充当卡片的容器，当容器第一次显示时，第一个添加到CardLayout对象的组件为可见组件。
     卡片的顺序由组件对象本身在容器内部的顺序决定。CardLayout定义了一组方法，这些方法允许应用程序按顺序浏览这些卡片，或者显示指定的卡片。
-    
+    CardLayout有两种构造方法，分别如下:
+      ①CardLayout(): 创建一个默认的无间距的新的CardLayout布局管理器。
+      ②CardLayout(int hgap, int vgap): 创建一个具有指定的水平和垂直间距的新的CardLayout布局管理器。
+    除了可以使用add()将组件加入容器外，CardLayout还有以下一些常用方法。
+      ①public void first(Container parent): 翻转到容器的第一张卡片。
+      ②public void next(Container parent): 翻转到指定容器的下一张卡片。如果当前的可见卡片是最后一张，则此方法翻转到布局的第一张卡片。
+      ③public void previous(Container parent): 翻转到指定容器的前一张卡片。如果当前的可见卡片是第一张，则此方法翻转到布局的最后一张。
+      ④public void last(Container parent): 翻转到容器的最后一张。
+      ④public void show(Container parent, String name): 翻转到已添加到此布局的具有指定name的卡片。如果不存在这样的卡片，则不发生任何操作。
+    程序示例8_9.java 中为JFrame实例的内容窗格指定了一个CardLayout类型的布局管理器，然后向其中加入了3张卡片，每张卡片都是JPanel类的一个实例，并且具有不同的背景色。每当在程序窗口按动鼠标，就会显示下一张卡片。
 
   5.BoxLayout布局管理器
-
+    BoxLayout是定义在javax.swing包中的另一种常用布局管理器，它将容器中的组件按水平方向排成一行或按垂直方向排成一列。当组件排成一行时，每个组件可以有不同的宽度;当组件排成一列时，每个组件可以有不同的高度。
+    BoxLayout构造方法只有一个，其格式如下：
+      BoxLayout(Container target, int axis); 创建一个将沿给定轴放置组件的布局管理器。
+    其中，Container型参数target指明是为哪个容器设置此BoxLayout布局管理器，int型参数axis指明组件的排列方向，通常使用的是常量BoxLayout.X_AXIS或BoxLayout.Y_AXIS,分别表示按水平方向排列或按垂直方向排列。
+    程序8_10.java 是一个使用BoxLayout的例子，其中使用了两个JPanel容器，它们的布局管理器分别为垂直和水平方向的BoxLayout。JPanel容器中加入了若干标签和按钮，并被添加到frame内容窗格的中部和下部，当容器的大小改变时，组件的相对位置不会发生变化。
+    在javax.swing包中定义了一个专门使用BoxLayout的特殊容器（Box类），Box类中提供了创建Box实例的静态方法。
+      ①public static BoxcreateHorizontalBox(): 使用水平方向的BoxLayout。
+      ②public static BoxcreateVerticalBox(): 使用垂直方向的BoxLayout。
+    可以使用这两个方法改写程序8_10，达到与其相同的效果。将这个任务留作习题。
+    除了创建Box实例的静态方法外，Box类中还提供了一些创建不可见组件的方法，例如：
+      ①public static Component createHorizontalGlue()。
+      ②public static Component createVerticalGlue()。
+      ③public static Component createHorizontalStrut(int width)。
+      ④public static Component createVerticalStrut(int height)。
+      ⑤public static Component createRigidArea(Dimension d)。
+    这些不可见组件可以增加可见组件之间的距离，程序8_11.java 演示了Glue、Strut和RigidArea的结果，请查看。
+    Box1是没有添加不可见组件时的形式，Box2、Box3和Box4是分别添加了不可见组件Glue，Strut和Rigid之后的效果。Glue将填满所有剩余水平或垂直空间，Strut和Rigid则具有指定的宽度或高度。
 
   6.空布局
-
-
+    Java2平台提供的布局管理器已经可以满足大多数情况下的需要。在特殊场合，也可以不使用布局管理器，而是通过数值指定组件的位置和大小，这时首先需要调用容器的setLayout(null)将布局管理器设置为空，然后调用组件的setBounds()方法设置组件的位置和大小，setBounds()方法的格式如下：
+      setBounds(int x, int y, int width, int height);
+    其中前两个int型参数设置组件的位置，后两个int参数设置组件的宽度和高度。程序8_12.java是一个不使用布局管理器的例子。
 
 第五节、事件处理
   在Java程序运行时，如果用户进行某个操作，比如单击鼠标键或者输入字符，程序应当做出适当响应。用户在程序界面所进行的操作称为用户事件。对事件的响应称为事件处理。

@@ -1,6 +1,5 @@
 import java.awt.*;
 
-import javax.management.loading.PrivateClassLoader;
 import javax.swing.*;
 
 public class 程序8_6 {
