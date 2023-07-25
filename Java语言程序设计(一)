@@ -1876,18 +1876,160 @@
 第五节、事件处理
   在Java程序运行时，如果用户进行某个操作，比如单击鼠标键或者输入字符，程序应当做出适当响应。用户在程序界面所进行的操作称为用户事件。对事件的响应称为事件处理。
   1.事件处理模型
+    Java中定义了很多事件类，用于描述不同的用户行为，例如，代表鼠标事件的MouseEvent类和代表键盘事件的KeyEvent类等。每当用户在组件上进行某种操作时，事件处理系统便会生成一个事件类对象。例如，用鼠标单击按钮，事件处理系统便会生成一个代表此事件的ActionEvent事件类对象。操作不同，事件类对象也会不同。
+    Java中，为了便于管理，系统将事件分类，称为事件类型。系统为每一个事件类型提供一个侦听程序接口，它规定了接收并处理该类事件的方法的规范。为了接收并处理某类用户事件，组件必须注册相应的事件处理程序，这种事件处理程序称为事件侦听程序(Listener,也称为侦听器)，它是实现了对应侦听程序的接口的一个类。
+    要作为侦听程序对象的类必须实现相应的接口，并实现接口中规定的响应事件的方法。例如，为了处理按钮上的ActionEvent事件，需要定义一个实现ActionListener接口的侦听程序类。对应ActionEvent事件，有ActionListener接口:
+      public interface ActionListener extends EventListener {
+        public void actionPerformed(ActionEvent e);
+      }
+    该接口中只定义了一个方法，即actionPerformed()，当出现ActionEvent事件时，就会调用该方法。
+    每个组件都有若干个形如addXXXListener(XXXListener)的方法，通过这类方法，可以为组件注册事件侦听程序。例如在JButton类中有如下的方法:
+      public void addActionListener(ActionListener l)
+    该方法可为JButton组件注册ActionEvent事件侦听程序，方法的参数是实现了ActionListener接口的类的一个实例。也可以删除添加的事件侦听程序，例如：
+      public void removeActionListener(ActionListener l)
+    将移除指定的操作侦听其，以便它不再接收来自此按钮的操作事件。
+    这种处理机制称为委托事件处理模型。概况来说，事件被直接送往产生这个事件的组件，组件需要注册一个或多个侦听程序。侦听程序的类中包含了事件处理程序，用来接收和处理这个事件。事件是一个对象，它只向注册的侦听程序报告。事件处理的步骤如下：
+      ①程序中引入java.awt.event包。
+        import java.awt.event;
+      ②给所需的事件源对象注册事件侦听程序。
+        事件源对象.addXXXListener(XXXListener);
+      ③实现相应的方法。若某个侦听程序接口包含多个方法，则需要实现所有的方法。
+    程序8_13.java 是一个ActionEvent事件处理的例子。程序中定义了一个带单个按钮的框架，按钮组件注册了一个ButtonHandler对象作为ActionEvent事件的侦听程序，而ButtonHandler类实现了ActionListener接口，在该类的actionPerformed()方法中给出了ActionEvent事件的处理代码(本例是显示一条信息)。当用户单击按钮时，产生ActionEvent事件，调用actionPerformed()方法，显示字符串"Action occurred"。
+    ActionListener接口和ActionEvent类均定义在java.awt.event包中，因此在程序的开始处要引入这个包。
+    事件的侦听程序可以定义在一个单独的类中，也可以定义在组件类中，比如，程序8_13中，定义在单独的类ButtonHandler中。程序8_14中，定义在组件MyButton类中。
+    程序8_14.java 为侦听程序定义在组件类中的示例。
+    在程序8_14.java 中，自定义的MyButton组件继承自JButton，同时实现了ActionListener接口，因此MyButton组件对象可注册事件侦听程序。在MyButton的构造方法中，通过addActionListener(this)将自身注册为自己的侦听程序。当用户单击按钮时，调用System.exit(0)结束程序运行。
     
-
-  2.事件的种类
+  2.事件的种类  
+    在java.awt.event包和javax.swing.event包中还定义了很多其他事件类，例如，ActionEvent，ItemEvent，MouseEvent和KeyEvent等，每种事件类都有一个对应的接口，接口中声明了一个或多个抽象的事件处理方法。凡是需要接收并处理事件类对象的类，都需要实现相应的接口。下面列出了一些常用事件类型、产生相关事件的组件、与之相应的接口以及接口中所声明的方法。这些方法的名称均表明了在何种情况下方法会被调用，便于记忆。
+        事件类型          组件              接口名称                方法及说明
+      ------------------------------------------------------------------------------------------  
+                        JButton 
+                        JCheckBox
+      ActionEvent       JComboBox        ActionListener         actionPerformed(ActionEvent): 单击按钮、选择菜单项或在文本框中按<ENTER>键时
+                        JMenuItem
+                        JRadioButton
+      -------------------------------------------------------------------------------------------
+      AdjustmentEvent   JScrollBar       AdjustmentListener     adjustmentValueChanged(AdjustmentEvent): 当改变滚动条滑块位置时
+      -------------------------------------------------------------------------------------------
+                                                                    componentMoved(ComponentEvent): 组件移动时
+                                                                    componentHidden(ComponentEvent): 组件隐藏时
+      ComponentEvent    JComponent类及其子类    ComponentListener   componentResized(ComponentEvent): 组件缩放时
+                                                                    componentShown(ComponentEvent): 组件显示时候
+      -------------------------------------------------------------------------------------------
+      ContainerEvent    JContainer类及其子类    ContainerListener   componentAdded(ContainerEvent): 添加组件时
+                                                                    componentRemoved(ContainerEvent): 移除组件时
+      -------------------------------------------------------------------------------------------
+      FocusEvent        同ComponentEvent        FocusListener       focusGained(FocusEvent): 组件获得焦点时
+                                                                    focusLost(FocusEvent): 组件失去焦点时
+      -------------------------------------------------------------------------------------------
+                        JCheckBox
+      ItemEvent         JCheckboxMenuItem       ItemListener        itemStateChanged(ItemEvent)选择复选框、选项框、单击列表框、选中带复选框菜单时
+                        JComboBox
+      -------------------------------------------------------------------------------------------
+                                                                    keyPressed(keyEvent)键按下时
+      KeyEvent          同ComponentEvent        KeyListener         keyReleased(keyEvent)键释放时
+                                                                    keyTyped(KeyEvent)击键时
+      -------------------------------------------------------------------------------------------
+                                                                    mousePressed(MouseEvent)鼠标键按下时
+                                                                    mouseReleased(MouseEvent)鼠标键释放时
+      MouseButtonEvent  同ComponentEvent        MouseListener       mouseEntered(MouseEvent)鼠标进入时
+                                                                    mouseExited(MouseEvent)鼠标离开时
+                                                                    mouseClicked(MouseEvent)单击鼠标时
+      -------------------------------------------------------------------------------------------
+      MouseMotionEvent  同ComponentEvent       MouseMotionListener  mouseDragged(MouseEvent)鼠标拖放时
+                                                                    mouseMoved(MouseEvent)鼠标移动时
+      -------------------------------------------------------------------------------------------
+      TextEvent         JTextField             TextListener         textValueChanged(TextEvent)文本框、文本区内容修改时
+                        JTextArea                                   
+      -------------------------------------------------------------------------------------------
+                                                                    windowClosing(WindowEvent)  窗口关闭时
+                                                                    windowOpened(WindowEvent)   窗口打开时
+                        JFrame                                      windowIconified(WindowEvent)窗口最小化时 
+      WindowEvent       JWindow                 WindowListener      windowDeiconified(WindowEvent) 最小化窗口还原时
+                        JDialog                                     windowClosed(WindowEvent)    窗口关闭时
+                                                                    windowActivated(WindowEvent) 窗口激活时
+                                                                    windowDeactivated(WindowEvent) 窗口失去焦点时
+      -------------------------------------------------------------------------------------------
+    程序8_15.java是一个处理鼠标拖动的程序。拖动鼠标而引发的MouseEvent事件类对象可以由实现了MouseMotionListener接口的类来处理。MouseMtionListener接口中声明了两个抽象方法，分别用于处理鼠标的拖动和移动。在实现MouseMotionListener接口的类中，必须同时实现上述两个方法。当然，mouseMoved()方法的内容可以为空，因为程序中只对鼠标拖动感兴趣。
+    因为还想要控制鼠标进出程序窗口的动作，在窗口底部的文本框内显示相关信息，所以程序还必须实现MouseListener接口。从上表中可知，这个接口声明了5个抽象方法。故在程序8_15的类定义中，声明同时实现了两个接口MouseMotionListener和MouseListener，接口名称之间用逗号分隔。另外，可以在同一组件上侦听多类事件，例如:
+      f.addMouseListener(this);
+      f.addMouseMotionListener(this);
+    这两个语句给f注册了两个侦听程序。
+    当调用事件处理的方法时，例如，mouseDragged(),会传给方法一个参数，这个参数时一个事件类对象，其中包含与事件有关的重要信息。例如，MouseEvent对象中包含了鼠标事件发生时的坐标信息，可以通过getX()和getY()方法来获取具体数据。
+    具体内容查看程序8_15.java，检测鼠标拖动示例
 
   3.事件适配器
-
+    事件侦听模式允许为一个组件注册多个侦听程序，通常的做法时在该事件的处理程序中编写需要的所有响应。有时需要在同一程序的不同部分对同一事件进行响应。事件侦听模型允许根据需要多次调用addListener方法，为某个组件的同一事件注册多个不同的侦听程序，当事件发生时，所有相关的侦听程序都会被调用。当事件发生时，单个事件的多个侦听程序的调用顺序时不确定的。
+    为了进行事件处理，需要创建实现Listener接口的类，而在某些Listener接口中，声明了很多抽象方法，为了实现这些接口，需要一一实现这些方法。例如，在MouseListener接口中，声明了5个抽象方法，在实现MouseListener接口的类中，必须同时实现这5个方法。然而，在某些情况下，关心的只是接口中的个别方法，例如:
+      public class MouseClickHandler implements MouseListener {
+        // 只关心对单击鼠标事件的处理，因此改写mouseClicked()方法。
+        public void mouseClicked(MouseEvent e) {
+          /* 进行有关的处理 8/
+        }
+        // 但是对其他方法，仍然需要给出实现
+        public void mousePressed(MouseEvent e) { }  
+        public void mouseReleased(MouseEvent e) { }  
+        public void mouseEntered(MouseEvent e) { }  
+        public void mouseExited(MouseEvent e) { }  
+      }
+    为了编程方便，Java为一些声明了多个方法的Listener接口提供了相对应的适配器类，如下
+      接口名称            适配器名称             接口名称             适配器名称
+      ComponentListener   ComponentAdapter      MouseListener         MouseAdapter
+      ContainerListener   ContainerAdapter      MouseMotionListener   MouseMotionAdapter
+      FocusListener       FocusAdapter          MouseInputListener    MouseInputAdapter
+      KeyListener         KeyAdapter            WindowListener        WindowAdapter
+    在适配器类中实现了相应接口中的全部方法，只是方法的内容为空。例如，MouseListener接口的形式如下。
+      public interface MouseListener extends EventListener {
+        public void mouseClicked(MouseEvent e);
+        public void mousePressed(MouseEvent e);
+        public void mouseReleased(MouseEvent e);
+        public void mouseEntered(MouseEvent e);
+        public void mouseExited(MouseEvent e);
+      }
+    与其对应的适配器为MouseAdapter,形式如下：
+      public abstract class MoouseAdapter implements MouseListener {
+        public void mouseClicked(MouseEvent e) {}
+        public void mousePressed(MouseEvent e) {}
+        public void mouseReleased(MouseEvent e) {}
+        public void mouseEntered(MouseEvent e) {}
+        public void mouseExited(MouseEvent e) {}
+      }
+    这样，在创建新类时，就可以不实现接口，而是只继承某个适当的适配器，并且重写需要的事件处理方法，如下程序:
+      import java.awt.*;
+      import java.awt.event.*;
+      publci class MouseClickHandler extends MouseAdapter {
+        // 只关心对单击鼠标事件的处理，在这里继承MouseAdapter，并且只需要覆盖有关方法
+        public void mouseClicked(MouseEvent e) { /*进行有关的处理*/}
+      }
 
 第六节、绘图基础
-
+  在平面上绘图或显示文字，需要先确定一个平面坐标系。Java语言约定，显示屏上一个长方形区域为程序的绘图区域，坐标原点(0,0)位于整个区域的左上角。一个坐标点(x,y)对应屏幕窗口中的一个像素，这里x与y必须都是非负整数。x在水平方向上从左向右递增，y在竖直方向上从左向右递增。设定绘图区域的宽width和高height，绘图区域的大小也就确定下来了。
   1.颜色
+    可以使用java.awt包中的Color类来定义和管理颜色。Color类的每个对象表示一种颜色。可以有两种方法生成颜色。一种方法是使用Java的Color类中预定义的颜色，例如，Color类中包含了26个常量，提供了13种基本的预定义的颜色。下列表列出了Color类中预定义的颜色，使用全大写或全小写都是允许的，例如，Color.black和Color.BLACK都代表黑色。
+              颜色            对象              RGB值
+              黑色         Color.black          0,0,0
+              蓝色         Color.blue           0,0,255
+              灰色         Color.gray           128,128,128
+              ....         .....                 ...
+    另一种方法是通过红、绿、蓝三原色的值来组合。每种颜色由3个值来指定，它们一起称为RGB值，RGB分别代表红、绿、蓝。各个值表示对应原色的相对值，使用一个字节(8位)来保存，取值范围为0~255。3种原色的值合在一起决定实际的颜色值，比如：
+      int r = 255, g = 255,b = 0;
+      Color myColor = new Color(r, g, b);
+    上述命令使用指定的红、绿、蓝值构造一个新的颜色myColor。这个颜色是黄色。
+    可以使用下面两个定义在JComponent中的方法设置组件的前景色和背景色：
+      ①public void setForeground(Color c): 设置前景色。
+      ②public void setBackground(Color c): 设置背景色。
+    在这两个方法中，都需要java.awt.Color类的一个实例作参数，包括Color类中预定义的颜色常量，比如Color.red和Color.blue，或是自己创建的颜色。
 
   2.字体
+    显示文字的方法主要有以下3种。
+      ①public void drawChars(char[] data, int offset, int length, int x, int y): 使用此图形上下文的当前字体和颜色显示字符数组data中从offset位置开始，最多length个字符。首字符的基准线位于此图形上下文坐标系统的(x, y)处。
+      ②public void drawString(String aString, int x, int y): 在指定位置显示字符串aString。
+      ③public void drawBytes(byte[] data, int offset, int length, int x, int y): 使用此图形上下文的当前字体和颜色显示由指定的byte数组data中从offset开始，最多length个字符。首字符的基准线位于此图形上下文坐标系统的(x, y)处。
+    文字字形有字体、样式及字号3个要素。常用的字体有Times New roman、Symbol、宋体、楷体等。基本的样式有Font.PLAIN(正常)、Font.BOLD(粗体)及Font.ITALIC(斜体)3种，也成为字形风格。基本样式可以组合使用，例如Font.BOLD + Font.ITALLIC表示粗斜体。字号是字的大小，单位是磅。
+    
+
+
 
   3.Graphics类的基本功能
 
