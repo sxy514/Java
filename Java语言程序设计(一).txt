@@ -1417,7 +1417,7 @@
         }
 
     4.2 对象结构表
-      序列化只能保存对象再非静态成员变量，而不能保存在任何成员方法和静态成员变量，并且保存的只是变量的值，对于变量的任何修饰符都不能保存，访问权限(public,protected,private) 对于数据域的序列化没有影响。
+      序列化只能保存对象的非静态成员变量，而不能保存在任何成员方法和静态成员变量，并且保存的只是变量的值，对于变量的任何修饰符都不能保存，访问权限(public,protected,private) 对于数据域的序列化没有影响。
       有一些对象类不具有可持久性，因为其数据的特性决定了它会经常变化，其状态只是瞬时的，这样的对象是无法保存其状态的，如Thread对象或流对象。对于这样的成员变量，必须用transient关键字标明，否则编译器会报错。任何同transient关键字标明的成员变量都不会被保存。
       另外，序列化可能涉及将对象存放到磁盘上或在网络上发送数据，这时会产生安全问题。对于一些需要保密的数据，不应保存在永久介质中，更不应简单地不加处理地保存下来，为了保证安全，应在这些变量前加上transient关键字。
       如果一个可持久化的对象中包含一个指向不可持久化元素的引用，则整个持久化操作将失败。
@@ -2087,7 +2087,7 @@
       ④fillRect(int x, int y, int width, int height)。
       ⑤fillRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight)。
     每个图形环境都有一种画图或是画字符串时正使用的前景色。画图所在的每个表面都有背景设。用Graphics类中的setColor方法可以设置前景色，使用所画组件(如面板)的setBackground方法可以设置背景色。
-    
+
 
 
   4.Graphics2D绘图
@@ -2100,8 +2100,47 @@
 第九章、Swing组件
 第一节、组合框与列表
   1.组合框
+    组合框(JComboBox)是一个下拉式菜单，它有两种形式：不可编辑的和可编辑的。对于不可编辑的JComboBox，用户只能在现有的选项列表中进行选择；对于可编辑的JComboBox，用户既可以在现有选项中选择，有可以输入新的内容。
+    JComboBox常用的构造方法有以下两种：
+      ①JComboBox(): 创建一个没有任何可选项的默认组合框
+      ②JComboBox(Object[] items): 根据Object数组创建组合框，Object数组的元素即为组合框中的可选项。
+    例如，下面命令将创建一个具有5个可选项的组合框。
+      String[] itemList = {"One","Two","Three"};
+      JComboBox jcb = new JComboBox(itemList);  // 使用数组itemList创建组合框
+    这里是通过字符串数组来创建组合框。实际上，也可以用其他类似的Object数组来创建。在组合框对象创建之，默认是不可编辑的，也可以通过setEditable(true)方法将其设置为可编辑的。
+    在JComboBox类中定义了相关的方法，可以添加或删除可选项。
+      ①void addItem(Object anObject): 在末尾位置添加新的可选项。
+      ②Object getItemAt(int index): 返回指定索引序号index处的可选项。
+      ③int getItemCount(): 返回列表中的项数。
+      ④void insertItemAt(Object anObject, int index): 在index指定的位置添加新的可选项anObject。
+      ⑤int getSelectedIndex(): 返回列表中与给定项匹配的第一个选项的索引序号。
+      ⑥Object getSelectedItem(): 返回当前所选项。
+      ⑦void removeAllItems(): 删除所有可选项。
+      ⑧void removeItem(Object anObject): 删除由anObject指定的可选项。
+      ⑨void removeItemAt(int anindex): 删除由anIndex指定处的可选项。
+    组合框上的用户事件既可以通过ActionListener处理，又可以通过ItemListener处理。用户输入项目后按<Enter>键，对应的接口是ActionListener。而用户选定项目，对应的接口是ItemListner。不过用户的一次选择操作，会引发两个ItemEvent事件，因此通常使用ActionListener处理比较方便。
+    程序9_1.java 是组合框示例，每当用户在组合框jcb1中进行选择，被选中的选项就会通过下面命令被插入到组合框jcb2中的第一个位置：
+      jcb2.insertItemAt(jcb1.getSelectedItem(), 0);
+    其中，getSelectedItem()方法可获得用户当前的选项。选项的索引序号是从0开始的。
 
   2.列表
+    列表(JList)是可供用户进行选择的一系列可选项，常用的构造方法如下。
+      ①JList(): 构造一个空列表。
+      ②JList(Object[] listData): 构造一个列表，列表的可选项由对象数组listData指定。
+      ③JList(Vector<?> listData): 构造一个列表，使其显示指定Vector中的元素。
+    例如，下面的语句根据String数组构造一个包含4个可选项的列表。
+      String[] data = {"one","two","three","four"};
+      JList dataList = new JList(data);
+    当用户在列表上进行选择时，将引发ListSelectionEvent事件。在JList中提供了addListSelectionListener(ListSelectionListener listener)方法，用于注册对应的事件侦听程序。在ListSelectionListener接口中，只包含一个方法：
+      public void valueChanged(ListSelectionEvent e);
+    当列表的当前选项发生变化时，将会调用该方法。
+    在JList类中定义了相关的方法，常用的有以下几种。
+      ①public int getSelectedIndex(): 返回所选项第一次出现的索引；如果没有所选项，则返回-1
+      ②public Object getSelectedValue(): 返回所选的第一个值，如果选择为空，则返回null。
+      ③public void setVisibleRowCount(int visibleRowCount): 设置不使用滚动条可以在列表中显示的首选行数。
+    
+
+
 
 第二节、文本组件
   1.文本域
