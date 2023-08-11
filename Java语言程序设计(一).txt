@@ -2138,18 +2138,33 @@
       ①public int getSelectedIndex(): 返回所选项第一次出现的索引；如果没有所选项，则返回-1
       ②public Object getSelectedValue(): 返回所选的第一个值，如果选择为空，则返回null。
       ③public void setVisibleRowCount(int visibleRowCount): 设置不使用滚动条可以在列表中显示的首选行数。
-    
-
+    查看程序9_2.java 可以看到列表示例。
+    当程序运行时，在文本域中输入字符串，并单击按钮，可以动态地为列表添加可选项。
+    在列表对象创建后，也可使用JList中定义的setModel(ListModel model)方法设置新的ListModel。列表对象本身并不带滚动条，但是当列表可选项较多时，可以将列表对象放入JScrollPane中以提供滚动功能。
+    列表既支持单项选择又支持多项选择，可以使用JList中定义的setSelectionMode(int selectionMode)方法对列表的选择模式进行设置，其中int型参数selectionMode可以时下列常量：
+      ListSelectionModel.SINGLE_SELECTION: 只能进行单项选择。
+      ListSelectionModel.SINGLE_INTERVAL_SELECTION: 可多项选择，但多个选项必须是连续的。
+      ListSelectionModel.MULTIPLE_INTERVAL_SELECTION: 可多项选择，多个选项可以是间断的，这是选择模式的默认值。
 
 
 第二节、文本组件
+  文本组件可用于显示信息和提供用户输入功能，在swing中提供了文本域(JtextField)、口令输入域(JPasswordField)、文本区(JTextArea)等多个文本组件，这些文本组件都有一个共同的父类JTextComponent，在JTextComponent中定义了多个文本组件所共有的一些方法，主要有以下几种：
+    String getSelectedText(): 从文本组件中提取被选中的文本内容。
+    String getText(): 从文本组件中提取所有文本内容。
+    String getText(int offs, int len): 从文本组件中提取指定范围的文本内容。
+    void select(int selectionStart, int selectionEnd): 在文本组件中指定的起始和结束位置之间的文本内容。
+    .....
   1.文本域
-
+    文本域是一个单行的文本输入框，可用于输入少量文本，常用的构造函数如下：
+    
   2.文本区
+    文本区是一个多行多列的文本输入框，常用的构造函数如下：
+
 
 第三节、菜单组件
+  菜单栏是窗口中的主菜单，用来包容一组菜单。菜单时最基本的下拉菜单，用来包容一组菜单项或子菜单。
   1.菜单栏及菜单
-
+  
   2.菜单项
 
   3.复选菜单项和单选菜单项
