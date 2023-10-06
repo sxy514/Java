@@ -2087,13 +2087,18 @@
       ④fillRect(int x, int y, int width, int height)。
       ⑤fillRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight)。
     每个图形环境都有一种画图或是画字符串时正使用的前景色。画图所在的每个表面都有背景设。用Graphics类中的setColor方法可以设置前景色，使用所画组件(如面板)的setBackground方法可以设置背景色。
-
+    多边形是有多个边的图形，在Java中，它由对应于多边形各顶点的点序列(x,y)来定义。常用数组来保存坐标序列。
+    略....更多内容翻阅自己看p188页
 
 
   4.Graphics2D绘图
 
 
 第八章小结：
+  本章介绍进行图形界面设计时组件的布局及事件处理，同时介绍容器的最简单的标签及按钮的概念。本章还介绍了与绘图相关的内容。
+  本章介绍的组件包括容器、按钮和标签，布局管理器包括FlowLayout、BorderLayout、GridLayout、CardLayout及BoxLayout等。
+  本章介绍的一个重要的内容是委托事件处理模型，通过这种机制，能够实现组件上的响应，对程序进行控制，完成人机交互功能。
+  本章还介绍了直接绘制图形的方法和机制，能够对组件的外观进行控制，包括组件的前景色、背景色以及文本的字体等。
 
 
 
@@ -2156,15 +2161,35 @@
     .....
   1.文本域
     文本域是一个单行的文本输入框，可用于输入少量文本，常用的构造函数如下：
-    
+      JTextField(): 构造一个空文本域。
+      JTextField(int cloumns): 构造一个具有指定列数的空文本域，int型参数columns指定文本域的列数。
+      JTextField(String text): 构造一个显示指定初始字符串的文本域，String型参数text指定要显示的初始字符串。
+      JTextField(String text, int cloumns): 构造一个具有指定列数并显示指定初始字符串的文本域，String型参数text指定要显示的初始字符串，int型参数cloumns指定文本域的列数，
+    文本域还有以下常用的方法：
+      void addActionListener(ActionListener l): 添加指定的操作侦听器，接收操作事件。
+      void removeActionListener(ActionListener l): 移除指定的操作侦听器,不在接收操作事件.
+      void setFont(Font F): 设置当前字体.
+      void setHorizontalAlignment(int alignment): 设置文本的水平对齐方式.有效值包括JTextField.LEFT, JTextField.CENTER, JTextField.RIGHT, JTextField.LEADING和JTextField.TRAILING
+      int getColumns(): 返回文本域的列数
+
   2.文本区
     文本区是一个多行多列的文本输入框，常用的构造函数如下：
 
 
 第三节、菜单组件
-  菜单栏是窗口中的主菜单，用来包容一组菜单。菜单时最基本的下拉菜单，用来包容一组菜单项或子菜单。
+  菜单也是最常见的GUI组件之一,Swing包中提供了多种菜单组件,包括JMenuBar、JMenuItem、JMenu、JChechBoxMenuItem、JRadioButtonMenuItem和JPopupMenu等。菜单有下拉式菜单和弹出式菜单两种，本节介绍下拉式菜单，这是最常见的一类菜单。
+
   1.菜单栏及菜单
-  
+    菜单栏是窗口中的主菜单，用来包容一组菜单。菜单栏只有一种构造方法。即JMenuBar()。JFrame、JApplet和JDialog等类中都定义了setMenuBar(JMenuBar menu)方法，可以把菜单栏放到窗口的上方，例如：
+      JFrame frame = new JFrame("Menu Demo");   // 菜单窗口标题是“Menu Demo”
+      JMenuBar mb = new JMenuBar();             // 创建菜单栏
+      frame.setJMenuBar(mb);                    // 放到框架的上方
+    JMenuBar上也可以注册一些事件侦程序，但通常情况下，对于JMenuBar上的用户事件，都不进行处理。
+    菜单的常用构造方法如下：
+      JMenu(): 构造没有文本的新菜单。
+      JMenu(String s): 构造具有指定标签的新菜单，String型参数s指定了菜单上的文本。
+      JMenu(String s, boolean b): 构造具有指定标签的新菜单，指示该菜单是否可以分离。
+      
   2.菜单项
 
   3.复选菜单项和单选菜单项
