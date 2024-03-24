@@ -1902,15 +1902,15 @@
     
   2.事件的种类  
     在java.awt.event包和javax.swing.event包中还定义了很多其他事件类，例如，ActionEvent，ItemEvent，MouseEvent和KeyEvent等，每种事件类都有一个对应的接口，接口中声明了一个或多个抽象的事件处理方法。凡是需要接收并处理事件类对象的类，都需要实现相应的接口。下面列出了一些常用事件类型、产生相关事件的组件、与之相应的接口以及接口中所声明的方法。这些方法的名称均表明了在何种情况下方法会被调用，便于记忆。
-        事件类型          组件              接口名称                方法及说明
+        事件类型          组件                  接口名称                方法及说明
       ------------------------------------------------------------------------------------------  
                         JButton 
                         JCheckBox
-      ActionEvent       JComboBox        ActionListener         actionPerformed(ActionEvent): 单击按钮、选择菜单项或在文本框中按<ENTER>键时
+      ActionEvent       JComboBox              ActionListener       actionPerformed(ActionEvent): 单击按钮、选择菜单项或在文本框中按<ENTER>键时
                         JMenuItem
                         JRadioButton
       -------------------------------------------------------------------------------------------
-      AdjustmentEvent   JScrollBar       AdjustmentListener     adjustmentValueChanged(AdjustmentEvent): 当改变滚动条滑块位置时
+      AdjustmentEvent   JScrollBar             AdjustmentListener   adjustmentValueChanged(AdjustmentEvent): 当改变滚动条滑块位置时
       -------------------------------------------------------------------------------------------
                                                                     componentMoved(ComponentEvent): 组件移动时
                                                                     componentHidden(ComponentEvent): 组件隐藏时
@@ -1937,10 +1937,10 @@
                                                                     mouseExited(MouseEvent)鼠标离开时
                                                                     mouseClicked(MouseEvent)单击鼠标时
       -------------------------------------------------------------------------------------------
-      MouseMotionEvent  同ComponentEvent       MouseMotionListener  mouseDragged(MouseEvent)鼠标拖放时
-                                                                    mouseMoved(MouseEvent)鼠标移动时
+      MouseMotionEvent  同ComponentEvent        MouseMotionListener  mouseDragged(MouseEvent)鼠标拖放时
+                                                                     mouseMoved(MouseEvent)鼠标移动时
       -------------------------------------------------------------------------------------------
-      TextEvent         JTextField             TextListener         textValueChanged(TextEvent)文本框、文本区内容修改时
+      TextEvent         JTextField              TextListener         textValueChanged(TextEvent)文本框、文本区内容修改时
                         JTextArea                                   
       -------------------------------------------------------------------------------------------
                                                                     windowClosing(WindowEvent)  窗口关闭时
@@ -2189,10 +2189,22 @@
       JMenu(): 构造没有文本的新菜单。
       JMenu(String s): 构造具有指定标签的新菜单，String型参数s指定了菜单上的文本。
       JMenu(String s, boolean b): 构造具有指定标签的新菜单，指示该菜单是否可以分离。
-      
+       
   2.菜单项
+    如果将整个菜单系统看作是一棵树，那么菜单项就是这颗树的叶子，是菜单系统的最下面一级。常用的菜单项构造方法有以下几种：
+      JMenuItem(): 创建不带有设置文本或图像的菜单项。
+      JMenuItem(Icon icon): 创建一个只显示图标的菜单项，图标由Icon型参数icon指定。
+      JMenuItem(String text): 创建一个只显示文本的菜单项，文本由String类型参数text指定。
+      JMenuItem(String text, Icon icon): 创建一个同时显示文本和图标的菜单项，文本由String类型参数text指定，图标由Icon类型参数icon指定。
+      JMenuItem(String text, int mnemonic): 创建一个显示文本并且有快捷键的菜单项，文本由String类型参数text指定，快捷键由int类型参数mnemonic指定。
 
   3.复选菜单项和单选菜单项
+    复选菜单项和单选菜单项是两种特殊的菜单项，在复活菜单项前面有一个小方块，在单选菜单项前面有一个小圆圈。可以对这两类菜单项进行选中或不选中的操作，使用方法与复选按钮和单选按钮类似。
+    复选菜单项(或单选菜单项)与普通菜单项类似，可以显示文本和图标。由于复选菜单项(或单选菜单项)具有选中和不选中状态，因此在构造方法中可以用boolean型参数指定菜单项的初始状态。
+    以下是几种常用的复选菜单项的构造方法:
+      JCheckBoxMenuItem(): 创建一个未设置文本或图标、最初也为选定的复选框菜单项。
+      JCheckBoxMenuItem(Icon icon): 创建一个有图标、最初未被选定的复选框菜单项。
+
 
 第四节、对话框
   1.对话框
